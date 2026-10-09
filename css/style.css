@@ -341,3 +341,5 @@ button.card-name:hover { color: var(--accent); }
   .rules li { grid-template-columns: 2.8rem 1fr; gap: 0.3rem 0.8rem; }
   .rules li.sub { padding-left: 1.4rem; }
 }
+
+.cta-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; }
