@@ -7,19 +7,69 @@ const TERMS = [
 
 // Товары: порядок сверху вниз, от Спонсора к Воину. Цены меняй в prices.
 const PRODUCTS = [
-  { id: "sponsor", name: "Спонсор", prices: [599, 649, 699] },
-  { id: "eternity", name: "Eternity", prices: [479, 529, 579] },
-  { id: "stinger", name: "Stinger", prices: [419, 459, 499] },
-  { id: "dragon", name: "Dragon", prices: [349, 389, 429] },
-  { id: "avenger", name: "Avenger", prices: [319, 359, 399] },
-  { id: "legend", name: "Legend", prices: [269, 309, 349] },
-  { id: "phantom", name: "Phantom", prices: [229, 269, 309] },
-  { id: "master", name: "Master", prices: [179, 219, 259] },
-  { id: "ghost", name: "Ghost", prices: [129, 169, 209] },
-  { id: "paladin", name: "Паладин", prices: [99, 139, 179] },
-  { id: "geroy", name: "Герой", prices: [79, 119, 159] },
-  { id: "lord", name: "Лорд", prices: [49, 69, 99] },
-  { id: "voin", name: "Воин", prices: [19, 39, 59] },
+  { id: "sponsor", name: "Спонсор", prices: [599, 649, 699],
+    features: {
+      commands: [["Просмотр инвентаря игрока", "/invsee <Ник>"], ["Снять бан с игрока", "/unban <Ник>"], ["Выдать бан игроку (до 1 часа)", "/ban <Ник>"]],
+      perks: [["Макс кол-во домов", "10"], ["Слотов на аукционе", "20"], ["Радиус неара", "300"], ["Кулдаун перед телепортом", "0 сек"]],
+    } },
+  { id: "eternity", name: "Eternity", prices: [479, 529, 579],
+    features: {
+      commands: [["Объявление на сервер", "/broadcast"], ["Снять мут с игрока", "/unmute <Ник>"], ["Выдать мут игроку (до 1 часа)", "/amute <Ник>"]],
+      perks: [["Макс кол-во домов", "9"], ["Слотов на аукционе", "19"], ["Радиус неара", "250"], ["Кулдаун перед телепортом", "1 сек"], ["Зачёркнутый текст в чате"]],
+    } },
+  { id: "stinger", name: "Stinger", prices: [419, 459, 499],
+    features: {
+      perks: [["Макс кол-во домов", "9"], ["Слотов на аукционе", "18"], ["Радиус неара", "240"], ["Кулдаун перед телепортом", "1 сек"], ["Жирный текст в чате"], ["Подчёркнутый текст в чате"]],
+    } },
+  { id: "dragon", name: "Dragon", prices: [349, 389, 429],
+    features: {
+      perks: [["Макс кол-во домов", "8"], ["Слотов на аукционе", "16"], ["Радиус неара", "220"], ["Кулдаун перед телепортом", "2 сек"], ["Цветной текст в чате"]],
+    } },
+  { id: "avenger", name: "Avenger", prices: [319, 359, 399],
+    features: {
+      commands: [["Вылечить игрока", "/heal <Ник>"], ["Накормить игрока", "/feed <Ник>"]],
+      perks: [["Макс кол-во домов", "7"], ["Слотов на аукционе", "15"], ["Радиус неара", "200"], ["Кулдаун перед телепортом", "2 сек"]],
+    } },
+  { id: "legend", name: "Legend", prices: [269, 309, 349],
+    features: {
+      commands: [["Личное время", "/ptime"], ["Личная погода", "/pweather"]],
+      perks: [["Макс кол-во домов", "6"], ["Слотов на аукционе", "14"], ["Радиус неара", "180"], ["Кулдаун перед телепортом", "3 сек"]],
+    } },
+  { id: "phantom", name: "Phantom", prices: [229, 269, 309],
+    features: {
+      commands: [["Открыть Эндер сундук", "/enderchest"], ["Встать в режим АФК", "/afk"]],
+      perks: [["Макс кол-во домов", "6"], ["Слотов на аукционе", "13"], ["Радиус неара", "160"], ["Кулдаун перед телепортом", "3 сек"]],
+    } },
+  { id: "master", name: "Master", prices: [179, 219, 259],
+    features: {
+      commands: [["Потушить себя", "/ext"], ["Открыть виртуальную наковальню", "/anvil"], ["Переключить режим ЛС", "/msgtoggle"]],
+      perks: [["Макс кол-во домов", "5"], ["Слотов на аукционе", "11"], ["Радиус неара", "150"], ["Кулдаун перед телепортом", "4 сек"]],
+    } },
+  { id: "ghost", name: "Ghost", prices: [129, 169, 209],
+    features: {
+      commands: [["Телепортироваться вверх", "/top"], ["Открыть кузнечный стол", "/smithtable"], ["Открыть точильный камень", "/grindstone"]],
+      perks: [["Макс кол-во домов", "4"], ["Слотов на аукционе", "10"], ["Радиус неара", "140"], ["Кулдаун перед телепортом", "4 сек"]],
+    } },
+  { id: "paladin", name: "Паладин", prices: [99, 139, 179],
+    features: {
+      commands: [["Открыть ткацкий станок", "/loom"], ["Открыть стол картографа", "/carttable"], ["Открыть камнерез", "/stonecutter"]],
+      perks: [["Макс кол-во домов", "3"], ["Слотов на аукционе", "9"], ["Радиус неара", "130"], ["Кулдаун перед телепортом", "5 сек"]],
+    } },
+  { id: "geroy", name: "Герой", prices: [79, 119, 159],
+    features: {
+      commands: [["Показать глубину/Y-координату", "/depth"], ["Восстановить здоровье", "/heal"], ["Восстановить голод", "/feed"]],
+      perks: [["Макс кол-во домов", "3"], ["Слотов на аукционе", "8"], ["Радиус неара", "120"], ["Кулдаун перед телепортом", "5 сек"]],
+    } },
+  { id: "lord", name: "Лорд", prices: [49, 69, 99],
+    features: {
+      commands: [["Очистить инвентарь", "/clear"], ["Игнорировать игрока", "/ignore"]],
+      perks: [["Точек дома", "2"], ["Слотов на аукционе", "7"], ["Радиус неара", "100"], ["Кулдаун перед телепортом", "6 сек"]],
+    } },
+  { id: "voin", name: "Воин", prices: [19, 39, 59],
+    features: {
+      commands: [["Открыть виртуальный верстак", "/workbench"], ["Надеть предмет на голову", "/hat"]],
+      perks: [["Точек дома", "2"], ["Слотов на аукционе", "5"], ["Радиус неара", "90"], ["Кулдаун перед телепортом", "6 сек"]],
+    } },
 ];
 
 // Корзина (хранится в браузере): [{ id: "voin", term: 0 }]
@@ -50,6 +100,16 @@ if (grid) {
 }
 paintCart();
 
+// Возможности привилегии: commands = [["описание", "/команда"]], perks = [["название", "значение"]]
+const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+function featHtml(p) {
+  const f = p.features;
+  if (!f) return "";
+  const block = (title, rows) => rows && rows.length ? `<section><h3>${title}</h3><ul class="feat-list">${rows.join("")}</ul></section>` : "";
+  return block("Команды", (f.commands || []).map(([t, c]) => `<li>${esc(t)} — <code>${esc(c)}</code></li>`))
+       + block("Возможности", (f.perks || []).map(([l, v]) => `<li>${esc(l)}${v ? `: <b>${esc(v)}</b>` : ""}</li>`));
+}
+
 // Окно товара: картинка, срок, цена, кнопка «В корзину»
 let pm = null;
 function buildPm() {
@@ -63,6 +123,7 @@ function buildPm() {
       <div class="pm-info">
         <span class="card-cat">Привилегии</span>
         <h2 id="pm-name"></h2>
+        <div class="pm-feat" id="pm-feat"></div>
         <div class="pm-terms" id="pm-terms" role="group" aria-label="Срок привилегии"></div>
         <div class="pm-buy">
           <span class="pm-price" id="pm-price"></span>
@@ -72,7 +133,7 @@ function buildPm() {
     </div>`);
   pm = {
     overlay: document.getElementById("pm-overlay"), el: document.getElementById("pm"),
-    name: document.getElementById("pm-name"), terms: document.getElementById("pm-terms"),
+    name: document.getElementById("pm-name"), feat: document.getElementById("pm-feat"), terms: document.getElementById("pm-terms"),
     price: document.getElementById("pm-price"), add: document.getElementById("pm-add"),
     id: null, term: 0, last: null,
   };
@@ -93,6 +154,7 @@ function openProduct(id) {
   pm.id = id;
   pm.term = entry ? entry.term : 0;
   pm.name.textContent = p.name;
+  pm.feat.innerHTML = featHtml(p);
   pm.last = document.activeElement;
   paintPm();
   pm.overlay.classList.add("open");
