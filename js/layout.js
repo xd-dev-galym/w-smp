@@ -143,18 +143,22 @@
     hint.textContent = msg;
   }
 
+  const cartItems = () => getCart().map((e) => {
+    const p = PRODUCTS.find((x) => x.id === e.id);
+    return p ? { p, term: e.term, price: p.prices[e.term] } : null;
+  }).filter(Boolean);
+
   function render() {
-    const items = getCart().map((id) => PRODUCTS.find((p) => p.id === id)).filter(Boolean);
-    const priced = items.every((p) => p.price);
-    const total = items.reduce((s, p) => s + (p.price || 0), 0);
+    const items = cartItems();
+    const total = items.reduce((s, i) => s + i.price, 0);
     cart.classList.toggle("is-empty", items.length === 0);
-    sub.textContent = items.length ? `${items.length} ${plural(items.length)}` + (priced ? ` на ${money(total)}` : "") : "Пока пусто";
-    totalEl.textContent = priced && items.length ? money(total) : "— ₽";
-    list.innerHTML = items.map((p) => `
+    sub.textContent = items.length ? `${items.length} ${plural(items.length)} на ${money(total)}` : "Пока пусто";
+    totalEl.textContent = items.length ? money(total) : "— ₽";
+    list.innerHTML = items.map(({ p, term, price }) => `
       <li class="cart-item">
         <span class="cart-thumb">${box}</span>
-        <span class="cart-info"><b>${p.name}</b><small>Привилегии</small></span>
-        <span class="cart-price">${p.price ? money(p.price) : "— ₽"}</span>
+        <span class="cart-info"><b>${p.name}</b><small>${TERMS[term].full}</small></span>
+        <span class="cart-price">${money(price)}</span>
         <button class="icon-btn small" type="button" data-remove="${p.id}" aria-label="Убрать ${p.name}">${trash}</button>
       </li>`).join("");
     validate();
@@ -181,12 +185,14 @@
     if (e.target.closest("[data-cart-close]")) return closeCart();
     const rm = e.target.closest("[data-remove]");
     if (rm) {
-      setCart(getCart().filter((id) => id !== rm.dataset.remove));
+      setCart(getCart().filter((x) => x.id !== rm.dataset.remove));
       paintCart();
       return render();
     }
     if (e.target.closest(".add") && cart.classList.contains("open")) render();
   });
+
+  document.addEventListener("cart:open", openCart);
 
   document.addEventListener("keydown", (e) => {
     if (!cart.classList.contains("open")) return;
@@ -211,10 +217,23 @@
   }));
   terms.addEventListener("change", validate);
 
+  // Пока оплата идёт через бота поддержки: заказ копируется и открывается чат с ботом.
+  // Когда подключишь платёжную систему, замени содержимое этого обработчика на переход к оплате.
+  const SUPPORT_BOT = "https://t.me/w_smp_bot";
   pay.addEventListener("click", () => {
-    const order = { items: getCart(), nick: nick.value.trim(), email: email.value.trim(), gift: isGift(), friend: isGift() ? friend.value.trim() : null };
-    console.log("Заказ:", order);
-    // TODO: здесь подключить оплату (перенаправить на платёжную систему с данными заказа)
-    hint.textContent = "Оплата пока не подключена: данные заказа готовы.";
+    const items = cartItems();
+    const total = items.reduce((s, i) => s + i.price, 0);
+    const lines = ["Заказ WardenSMP", `Ник: ${nick.value.trim()}`, `E-mail: ${email.value.trim()}`];
+    if (isGift()) lines.push(`Подарок для: ${friend.value.trim()}`);
+    lines.push("Товары:");
+    items.forEach(({ p, term, price }) => lines.push(`• ${p.name} — ${TERMS[term].full} — ${money(price)}`));
+    lines.push(`Итого: ${money(total)}`);
+    const text = lines.join("\n");
+
+    const copied = navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject();
+    window.open(SUPPORT_BOT, "_blank", "noopener");
+    copied
+      .then(() => { hint.textContent = "Заказ скопирован. Вставь его в чат с ботом поддержки и отправь."; })
+      .catch(() => { hint.textContent = "Не удалось скопировать заказ. Отправь его боту вручную:\n" + text; });
   });
 })();
