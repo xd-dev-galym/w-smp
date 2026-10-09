@@ -309,3 +309,30 @@ button.card-name:hover { color: var(--accent); }
   .pm-info h2 { padding-right: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .pm, .pm.open { transition: none; } }
+
+/* Rules */
+.rules-layout { display: grid; grid-template-columns: 250px 1fr; gap: 2rem; align-items: start; padding-bottom: clamp(3rem, 7vw, 5rem); }
+.rules-nav { position: sticky; top: 100px; display: grid; gap: 0.2rem; padding: 0.6rem; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; }
+.rules-nav a { padding: 0.55rem 0.8rem; border-radius: 10px; color: var(--muted); font-size: 0.95rem; font-weight: 500; }
+.rules-nav a:hover { color: var(--text); background: var(--panel-2); }
+.rules-body { display: grid; gap: 1.2rem; }
+.rules-sec { scroll-margin-top: 100px; padding: clamp(1.2rem, 3vw, 1.8rem); background: var(--panel); border: 1px solid var(--line); border-radius: 18px; }
+.rules-sec h2 { margin: 0 0 0.8rem; font: 700 clamp(1.1rem, 2.4vw, 1.4rem)/1.25 var(--font-head); }
+.rules { list-style: none; margin: 0; padding: 0; }
+.rules li { display: grid; grid-template-columns: 3.6rem 1fr; gap: 0.3rem 1rem; padding: 0.7rem 0.6rem; border-top: 1px solid var(--line); border-radius: 10px; scroll-margin-top: 100px; }
+.rules li:first-child { border-top: 0; }
+.rules li.sub { padding: 0.25rem 0.6rem 0.25rem 3rem; border-top: 0; }
+.rules li:target { background: rgba(34, 160, 254, 0.1); }
+.rn { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
+.rules li.sub .rn { color: var(--muted); }
+.rn:hover { color: #6cc1ff; }
+.rule-note { grid-column: 2; margin: 0.3rem 0 0; padding: 0.7rem 1rem; background: rgba(34, 160, 254, 0.08); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; color: var(--muted); font-size: 0.95rem; }
+@media (max-width: 900px) {
+  .rules-layout { grid-template-columns: 1fr; gap: 1rem; }
+  .rules-nav { position: static; display: flex; overflow-x: auto; gap: 0.3rem; }
+  .rules-nav a { white-space: nowrap; }
+}
+@media (max-width: 480px) {
+  .rules li { grid-template-columns: 2.8rem 1fr; gap: 0.3rem 0.6rem; }
+  .rules li.sub { padding-left: 1.4rem; }
+}
