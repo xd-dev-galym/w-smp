@@ -194,6 +194,7 @@ button { font-family: inherit; }
 @media (max-width: 800px) { .contacts-grid { grid-template-columns: 1fr; } }
 
 /* Cart drawer */
+.cart:focus, .pm:focus { outline: none; }
 .lock { overflow: hidden; }
 .cart-overlay {
   position: fixed; inset: 0; z-index: 90; background: rgba(4, 8, 12, 0.55);
@@ -370,7 +371,7 @@ button.card-name:hover { color: var(--accent); }
 @media (max-width: 540px) { .catalog .grid { grid-template-columns: 1fr; } }
 
 /* Payment page */
-.pay { padding-bottom: clamp(3rem, 7vw, 5rem); }
+.pay-page { padding-bottom: clamp(3rem, 7vw, 5rem); }
 .pay-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.8rem; margin: 0 0 1.1rem; font: 700 clamp(1.25rem, 3vw, 1.6rem)/1.25 var(--font-head); }
 .pay-title small { color: var(--muted); font: 500 0.9rem var(--font-body); }
 .pay-card { display: grid; grid-template-columns: 1fr 290px; margin-bottom: 2.5rem; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; }
