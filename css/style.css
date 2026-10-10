@@ -396,3 +396,9 @@ button.card-name:hover { color: var(--accent); }
   .pay-card { grid-template-columns: 1fr; }
   .pay-qr { border-left: 0; border-top: 1px solid var(--line); }
 }
+
+/* "Как оплатить" block under the privileges */
+.catalog-main { min-width: 0; }
+.pay-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.2rem; margin-top: 2rem; padding: 1.5rem 1.6rem; background: rgba(34, 160, 254, 0.06); border: 1px solid rgba(34, 160, 254, 0.25); border-radius: 18px; }
+.pay-cta h2 { margin: 0 0 0.3rem; font: 700 1.2rem var(--font-head); }
+.pay-cta p { margin: 0; max-width: 34rem; color: var(--muted); }
