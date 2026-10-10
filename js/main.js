@@ -93,7 +93,7 @@ const ICONS = {
 };
 
 // Категории товаров
-const CATS = [{ id: "priv", label: "Привилегии" }, { id: "other", label: "Другое" }];
+const CATS = [{ id: "all", label: "Все" }, { id: "priv", label: "Привилегии" }, { id: "other", label: "Другое" }];
 
 // Донат-валюта Варды. rate = сколько рублей стоит 1 Варда (впиши свой курс!).
 // tiers = скидка за объём: [от скольки Вард, процент скидки]. Скидка небольшая, максимум 10%.
@@ -123,7 +123,7 @@ function lineOf(e) {
 
 // Карточки товаров на странице
 const grid = document.getElementById("products");
-let activeCat = "priv";
+let activeCat = "all";
 function cardPrice(p) {
   const t = typeOf(p);
   if (t === "item") return money(p.price);
@@ -132,12 +132,11 @@ function cardPrice(p) {
 }
 function renderGrid() {
   if (!grid) return;
-  const label = CATS.find((c) => c.id === activeCat).label;
-  grid.innerHTML = PRODUCTS.filter((p) => (p.cat || "priv") === activeCat).map((p) => `
+  grid.innerHTML = PRODUCTS.filter((p) => activeCat === "all" || (p.cat || "priv") === activeCat).map((p) => `
     <article class="card">
       <button class="card-img" type="button" data-open="${p.id}" aria-label="${p.name}: выбрать вариант">${ICONS[p.icon || "box"]}</button>
       <div class="card-body">
-        <span class="card-cat">${label}</span>
+        <span class="card-cat">${CATS.find((c) => c.id === (p.cat || "priv")).label}</span>
         <button class="card-name" type="button" data-open="${p.id}">${p.name}</button>
         <span class="card-price">${cardPrice(p)}</span>
         <button class="add" type="button" data-open="${p.id}">Выбрать вариант</button>
@@ -199,7 +198,6 @@ function buildOptions(p) {
         <input id="vd-range" class="vd-range" type="range" min="0" max="1000" step="1" aria-label="Количество Вард">
         <div class="vd-scale"><span>${fmtNum(VARDA.min)}</span><span>${fmtNum(VARDA.max)}</span></div>
         <div class="vd-presets">${[100, 500, 1000, 5000, 10000].map((n) => `<button type="button" data-qty="${n}">${fmtNum(n)}</button>`).join("")}</div>
-        <div class="vd-tiers">${VARDA.tiers.map(([from, pct]) => `<span class="vd-tier" data-pct="${pct}">от ${fmtNum(from)} · −${pct}%</span>`).join("")}</div>
       </div>`;
   } else {
     pm.terms.innerHTML = "";
@@ -226,7 +224,6 @@ function paintPm() {
     if (document.activeElement !== num) num.value = pm.qty;
     range.value = posOf(pm.qty);
     range.style.setProperty("--p", range.value / 10 + "%");
-    pm.terms.querySelectorAll(".vd-tier").forEach((t) => t.classList.toggle("on", d > 0 && Number(t.dataset.pct) === d));
   }
   pm.next = next;
   pm.price.textContent = money(price);
