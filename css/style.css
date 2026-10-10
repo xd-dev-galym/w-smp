@@ -443,6 +443,3 @@ button.card-name:hover { color: var(--accent); }
 .vd-presets { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .vd-presets button { padding: 0.4rem 0.8rem; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; color: var(--muted); font: 600 0.85rem var(--font-body); cursor: pointer; }
 .vd-presets button:hover { color: var(--text); border-color: var(--accent); }
-.vd-tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.2rem, 1fr)); gap: 0.4rem; }
-.vd-tier { padding: 0.4rem 0.5rem; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); font-size: 0.8rem; text-align: center; }
-.vd-tier.on { background: rgba(34, 160, 254, 0.14); border-color: var(--accent); color: var(--accent); }
