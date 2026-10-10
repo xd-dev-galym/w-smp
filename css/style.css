@@ -371,6 +371,7 @@ button.card-name:hover { color: var(--accent); }
 @media (max-width: 540px) { .catalog .grid { grid-template-columns: 1fr; } }
 
 /* Payment page */
+.narrow { width: min(960px, 100% - 2.5rem); }
 .pay-page { padding-bottom: clamp(3rem, 7vw, 5rem); }
 .pay-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.8rem; margin: 0 0 1.1rem; font: 700 clamp(1.25rem, 3vw, 1.6rem)/1.25 var(--font-head); }
 .pay-title small { color: var(--muted); font: 500 0.9rem var(--font-body); }
