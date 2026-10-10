@@ -443,3 +443,5 @@ button.card-name:hover { color: var(--accent); }
 .vd-presets { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .vd-presets button { padding: 0.4rem 0.8rem; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; color: var(--muted); font: 600 0.85rem var(--font-body); cursor: pointer; }
 .vd-presets button:hover { color: var(--text); border-color: var(--accent); }
+.vd-get { margin: 0; color: var(--muted); }
+.vd-get b { color: var(--text); font: 700 1.25rem var(--font-head); }
