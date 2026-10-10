@@ -76,13 +76,15 @@ const PRODUCTS = [
   { id: "varda", name: "Донат валюта Варды", cat: "other", type: "currency", icon: "coin" },
 ];
 
-// Корзина (хранится в браузере). Записи: привилегия { id, term }, услуга { id }, валюта { id, qty }
+// Корзина (хранится в браузере). Записи: привилегия { id, term }, услуга { id }, валюта { id, rub }
 const CART_KEY = "wsmp-cart-v2";
 const getCart = () => { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch (e) { return []; } };
 const setCart = (c) => { try { localStorage.setItem(CART_KEY, JSON.stringify(c)); } catch (e) {} };
 const badge = document.querySelector(".badge");
 function paintCart() {
-  const n = getCart().length;
+  const all = getCart(), cart = all.filter((e) => lineOf(e));
+  if (cart.length !== all.length) setCart(cart); // убираем устаревшие записи
+  const n = cart.length;
   if (badge) { badge.textContent = n; badge.classList.toggle("on", n > 0); }
 }
 const money = (n) => n.toLocaleString("ru-RU") + " ₽";
@@ -95,19 +97,19 @@ const ICONS = {
 // Категории товаров
 const CATS = [{ id: "all", label: "Все" }, { id: "priv", label: "Привилегии" }, { id: "other", label: "Другое" }];
 
-// Донат-валюта Варды. rate = сколько рублей стоит 1 Варда (впиши свой курс!).
-// tiers = скидка за объём: [от скольки Вард, процент скидки]. Скидка небольшая, максимум 10%.
-const VARDA = { min: 10, max: 100000, rate: 1, tiers: [[1000, 2], [5000, 4], [10000, 6], [25000, 8], [50000, 10]] };
+// Донат-валюта Варды: 1 ₽ = perRub Вард. min/max — сумма покупки в рублях.
+// tiers = бонус за объём: [от скольки рублей, на сколько % больше Вард]. Бонус небольшой, максимум 10%.
+const VARDA = { min: 10, max: 58000, perRub: 100, tiers: [[1000, 2], [5000, 4], [10000, 6], [25000, 8], [50000, 10]] };
 const typeOf = (p) => p.type || "priv";
-const clampQty = (n) => Math.min(VARDA.max, Math.max(VARDA.min, Math.round(Number(n)) || VARDA.min));
-const discountFor = (qty) => VARDA.tiers.reduce((d, [from, pct]) => (qty >= from ? pct : d), 0);
-const vardaPrice = (qty) => Math.round((qty * VARDA.rate * (100 - discountFor(qty))) / 100);
-// Положение ползунка (0..1000) в логарифмической шкале: так удобно выбирать и 10, и 100 000
+const clampRub = (n) => Math.min(VARDA.max, Math.max(VARDA.min, Math.round(Number(n)) || VARDA.min));
+const bonusFor = (rub) => VARDA.tiers.reduce((b, [from, pct]) => (rub >= from ? pct : b), 0);
+const vardsFor = (rub) => Math.round((rub * VARDA.perRub * (100 + bonusFor(rub))) / 100);
+// Положение ползунка (0..1000) в логарифмической шкале: так удобно выбирать и 10 ₽, и 50 000 ₽
 const posOf = (v) => Math.round((Math.log(v / VARDA.min) / Math.log(VARDA.max / VARDA.min)) * 1000);
-function qtyOf(pos) {
+function rubOf(pos) {
   const raw = VARDA.min * Math.pow(VARDA.max / VARDA.min, pos / 1000);
   const step = Math.pow(10, Math.max(Math.floor(Math.log10(raw)) - 1, 0));
-  return clampQty(Math.round(raw / step) * step);
+  return clampRub(Math.round(raw / step) * step);
 }
 
 // Строка корзины: товар, цена и подпись (используется в корзине в layout.js)
@@ -117,8 +119,9 @@ function lineOf(e) {
   const t = typeOf(p);
   if (t === "priv") return TERMS[e.term] ? { p, price: p.prices[e.term], label: TERMS[e.term].full } : null;
   if (t === "item") return { p, price: p.price, label: "Разовая услуга" };
-  const qty = clampQty(e.qty), d = discountFor(qty);
-  return { p, price: vardaPrice(qty), label: `${fmtNum(qty)} Вард` + (d ? ` · скидка ${d}%` : "") };
+  if (e.rub == null) return null;
+  const rub = clampRub(e.rub), b = bonusFor(rub);
+  return { p, price: rub, label: `${fmtNum(vardsFor(rub))} Вард` + (b ? ` · бонус +${b}%` : "") };
 }
 
 // Карточки товаров на странице
@@ -127,7 +130,7 @@ let activeCat = "all";
 function cardPrice(p) {
   const t = typeOf(p);
   if (t === "item") return money(p.price);
-  if (t === "currency") return "от " + money(Math.round(VARDA.min * VARDA.rate));
+  if (t === "currency") return "от " + money(VARDA.min);
   return "от " + money(Math.min(...p.prices));
 }
 function renderGrid() {
@@ -186,18 +189,19 @@ function buildPm() {
   const g = (id) => document.getElementById(id);
   pm = { overlay: g("pm-overlay"), el: g("pm"), img: g("pm-img"), cat: g("pm-cat"), name: g("pm-name"), feat: g("pm-feat"),
          terms: g("pm-terms"), note: g("pm-note"), price: g("pm-price"), add: g("pm-add"),
-         id: null, type: "priv", term: 0, qty: 100, next: null, last: null };
+         id: null, type: "priv", term: 0, rub: 100, next: null, last: null };
 }
 // Варианты для валюты (ползунок) строятся один раз при открытии окна
 function buildOptions(p) {
-  pm.terms.setAttribute("aria-label", pm.type === "priv" ? "Срок привилегии" : "Количество");
+  pm.terms.setAttribute("aria-label", pm.type === "priv" ? "Срок привилегии" : "Сумма покупки");
   if (pm.type === "currency") {
     pm.terms.innerHTML = `
       <div class="vd">
-        <label class="vd-field"><span>Количество</span><input id="vd-num" type="number" inputmode="numeric" min="${VARDA.min}" max="${VARDA.max}" step="1"><b>Вард</b></label>
-        <input id="vd-range" class="vd-range" type="range" min="0" max="1000" step="1" aria-label="Количество Вард">
-        <div class="vd-scale"><span>${fmtNum(VARDA.min)}</span><span>${fmtNum(VARDA.max)}</span></div>
-        <div class="vd-presets">${[100, 500, 1000, 5000, 10000].map((n) => `<button type="button" data-qty="${n}">${fmtNum(n)}</button>`).join("")}</div>
+        <label class="vd-field"><span>Сумма</span><input id="vd-num" type="number" inputmode="numeric" min="${VARDA.min}" max="${VARDA.max}" step="1"><b>₽</b></label>
+        <input id="vd-range" class="vd-range" type="range" min="0" max="1000" step="1" aria-label="Сумма в рублях">
+        <div class="vd-scale"><span>${fmtNum(VARDA.min)} ₽</span><span>${fmtNum(VARDA.max)} ₽</span></div>
+        <div class="vd-presets">${[100, 500, 1000, 5000, 10000].map((n) => `<button type="button" data-rub="${n}">${fmtNum(n)} ₽</button>`).join("")}</div>
+        <p class="vd-get" id="vd-get"></p>
       </div>`;
   } else {
     pm.terms.innerHTML = "";
@@ -216,20 +220,21 @@ function paintPm() {
     price = p.price;
     next = { id: pm.id };
   } else {
-    const d = discountFor(pm.qty);
-    price = vardaPrice(pm.qty);
-    next = { id: pm.id, qty: pm.qty };
-    note = d ? `Скидка за объём: ${d}%` : `Скидка за объём появится от ${fmtNum(VARDA.tiers[0][0])} Вард`;
+    const b = bonusFor(pm.rub);
+    price = pm.rub;
+    next = { id: pm.id, rub: pm.rub };
+    note = b ? `Бонус за объём: +${b}% Вард` : `Бонус за объём появится от ${fmtNum(VARDA.tiers[0][0])} ₽`;
     const num = document.getElementById("vd-num"), range = document.getElementById("vd-range");
-    if (document.activeElement !== num) num.value = pm.qty;
-    range.value = posOf(pm.qty);
+    if (document.activeElement !== num) num.value = pm.rub;
+    range.value = posOf(pm.rub);
     range.style.setProperty("--p", range.value / 10 + "%");
+    document.getElementById("vd-get").innerHTML = `Вы получите <b>${fmtNum(vardsFor(pm.rub))} Вард</b>`;
   }
   pm.next = next;
   pm.price.textContent = money(price);
   pm.note.textContent = note;
   const same = entry && JSON.stringify(entry) === JSON.stringify(next);
-  pm.add.textContent = !entry ? "В корзину" : same ? "Открыть корзину" : pm.type === "priv" ? "Изменить срок" : "Изменить количество";
+  pm.add.textContent = !entry ? "В корзину" : same ? "Открыть корзину" : pm.type === "priv" ? "Изменить срок" : "Изменить сумму";
 }
 function openProduct(id) {
   const p = PRODUCTS.find((x) => x.id === id);
@@ -239,7 +244,7 @@ function openProduct(id) {
   pm.id = id;
   pm.type = typeOf(p);
   pm.term = entry && entry.term != null ? entry.term : 0;
-  pm.qty = entry && entry.qty ? clampQty(entry.qty) : 100;
+  pm.rub = entry && entry.rub ? clampRub(entry.rub) : 100;
   pm.name.textContent = p.name;
   pm.cat.textContent = CATS.find((c) => c.id === (p.cat || "priv")).label;
   pm.img.innerHTML = ICONS[p.icon || "box"];
@@ -267,8 +272,8 @@ document.addEventListener("click", (e) => {
   if (e.target.closest("[data-pm-close]")) return closeProduct();
   const term = e.target.closest(".pm-term");
   if (term) { pm.term = Number(term.dataset.term); return paintPm(); }
-  const preset = e.target.closest("[data-qty]");
-  if (preset) { pm.qty = clampQty(preset.dataset.qty); document.getElementById("vd-num").value = pm.qty; return paintPm(); }
+  const preset = e.target.closest("[data-rub]");
+  if (preset) { pm.rub = clampRub(preset.dataset.rub); document.getElementById("vd-num").value = pm.rub; return paintPm(); }
   if (e.target.closest("#pm-add")) {
     const entry = getCart().find((x) => x.id === pm.id);
     if (!entry || JSON.stringify(entry) !== JSON.stringify(pm.next)) {
@@ -283,11 +288,11 @@ document.addEventListener("click", (e) => {
 });
 document.addEventListener("input", (e) => {
   if (!pm || !pm.el.classList.contains("open")) return;
-  if (e.target.id === "vd-num") { pm.qty = clampQty(e.target.value); paintPm(); }
-  if (e.target.id === "vd-range") { pm.qty = qtyOf(Number(e.target.value)); document.getElementById("vd-num").value = pm.qty; paintPm(); }
+  if (e.target.id === "vd-num") { pm.rub = clampRub(e.target.value); paintPm(); }
+  if (e.target.id === "vd-range") { pm.rub = rubOf(Number(e.target.value)); document.getElementById("vd-num").value = pm.rub; paintPm(); }
 });
 document.addEventListener("change", (e) => {
-  if (e.target.id === "vd-num" && pm) { e.target.value = pm.qty; }
+  if (e.target.id === "vd-num" && pm) { e.target.value = pm.rub; }
 });
 document.addEventListener("keydown", (e) => {
   if (!pm || !pm.el.classList.contains("open")) return;
