@@ -130,7 +130,6 @@
     email.value = saved.email || "";
   } catch (e) {}
 
-  const box = ic('<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>');
   const trash = ic('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>');
 
   function validate() {
@@ -143,10 +142,7 @@
     hint.textContent = msg;
   }
 
-  const cartItems = () => getCart().map((e) => {
-    const p = PRODUCTS.find((x) => x.id === e.id);
-    return p ? { p, term: e.term, price: p.prices[e.term] } : null;
-  }).filter(Boolean);
+  const cartItems = () => getCart().map(lineOf).filter(Boolean);
 
   function render() {
     const items = cartItems();
@@ -154,10 +150,10 @@
     cart.classList.toggle("is-empty", items.length === 0);
     sub.textContent = items.length ? `${items.length} ${plural(items.length)} на ${money(total)}` : "Пока пусто";
     totalEl.textContent = items.length ? money(total) : "— ₽";
-    list.innerHTML = items.map(({ p, term, price }) => `
+    list.innerHTML = items.map(({ p, label, price }) => `
       <li class="cart-item">
-        <span class="cart-thumb">${box}</span>
-        <span class="cart-info"><b>${p.name}</b><small>${TERMS[term].full}</small></span>
+        <span class="cart-thumb">${ICONS[p.icon || "box"]}</span>
+        <span class="cart-info"><b>${p.name}</b><small>${label}</small></span>
         <span class="cart-price">${money(price)}</span>
         <button class="icon-btn small" type="button" data-remove="${p.id}" aria-label="Убрать ${p.name}">${trash}</button>
       </li>`).join("");
@@ -226,7 +222,7 @@
     const lines = ["Заказ WardenSMP", `Ник: ${nick.value.trim()}`, `E-mail: ${email.value.trim()}`];
     if (isGift()) lines.push(`Подарок для: ${friend.value.trim()}`);
     lines.push("Товары:");
-    items.forEach(({ p, term, price }) => lines.push(`• ${p.name} — ${TERMS[term].full} — ${money(price)}`));
+    items.forEach(({ p, label, price }) => lines.push(`• ${p.name} — ${label} — ${money(price)}`));
     lines.push(`Итого: ${money(total)}`);
     const text = lines.join("\n");
 
