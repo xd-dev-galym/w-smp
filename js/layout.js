@@ -70,7 +70,7 @@
 
   const cartHtml = `
 <div class="cart-overlay" data-cart-close></div>
-<aside class="cart is-empty" id="cart" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+<aside class="cart is-empty" id="cart" role="dialog" aria-modal="true" aria-labelledby="cart-title" tabindex="-1">
   <div class="cart-head">
     <div><h2 id="cart-title">Корзина</h2><p id="cart-sub">Пока пусто</p></div>
     <button class="icon-btn" type="button" data-cart-close aria-label="Закрыть корзину">${ic('<path d="M6 6l12 12M18 6L6 18"/>')}</button>
@@ -171,7 +171,7 @@
     overlay.classList.add("open");
     cart.classList.add("open");
     document.body.classList.add("lock");
-    cart.querySelector("[data-cart-close]").focus();
+    cart.focus();
   }
   function closeCart() {
     overlay.classList.remove("open");
@@ -201,7 +201,7 @@
     const f = [...cart.querySelectorAll("button:not(:disabled), a[href], input")].filter((el) => el.offsetParent !== null);
     if (!f.length) return;
     const first = f[0], last = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === cart)) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
 
