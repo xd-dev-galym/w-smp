@@ -3,59 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WardenSMP — сервер Minecraft</title>
-  <meta name="description" content="WardenSMP: анархичное выживание, продуманная экономика и привилегии. IP: mc.w-smp.in">
-  <link rel="stylesheet" href="css/style.css?v=8">
+  <title>Как оплатить — WardenSMP</title>
+  <meta name="description" content="Как оплатить товары WardenSMP: перевод через Boosty и что отправить для подтверждения.">
+  <link rel="stylesheet" href="../css/style.css?v=7">
 </head>
-<body data-root="" data-page="home">
+<body data-root="../" data-page="eupay">
 
 <div id="site-header"></div>
 
 <main>
-  <section class="hero">
+  <section class="page-head">
     <div class="wrap">
-      <div>
-        <h1>Лучший сервер для твоих приключений</h1>
-        <p>Анархичное выживание без лишних ограничений, продуманная экономика и администрация, которая всегда выходит на связь.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#shop">
-            <svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-            Перейти к товарам
-          </a>
-          <button class="btn btn-dark" type="button" data-copy="mc.w-smp.in" aria-label="Скопировать IP-адрес сервера">
-            <svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg>
-            <span class="t">mc.w-smp.in</span>
-          </button>
-        </div>
-      </div>
-      <!-- Справа место под персонажа: добавь сюда <img src="img/character.png" alt=""> -->
-      <div class="hero-art">
-        <div class="sonar" aria-hidden="true"><span></span><span></span><span></span></div>
-      </div>
+      <h1>Как оплатить?</h1>
+      <p>Оплата проходит в два шага: перевод на наш Boosty и подтверждение заказа администрацией.</p>
     </div>
   </section>
 
-  <section class="shop" id="shop">
-    <div class="wrap">
-      <h2>Ассортимент</h2>
-      <p class="cat-label">Категории</p>
-      <div class="cats"><button class="cat" type="button" aria-pressed="true">Привилегии</button></div>
-      <div class="grid" id="products"></div>
+  <section class="wrap pay">
+    <h2 class="pay-title">Способ 1 · Boosty <small>Рекомендуем — работает из любой страны</small></h2>
 
-      <div class="pay-cta">
-        <div>
-          <h2>Как оплатить?</h2>
-          <p>Оплата проходит через Boosty. Подробная инструкция и что отправить для подтверждения — на отдельной странице.</p>
+    <div class="pay-card">
+      <div class="pay-main">
+        <div class="pay-head">
+          <span class="pay-logo"><svg class="ic" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span>
+          <div>
+            <h3>Перевод через Boosty</h3>
+            <p>Все международные карты · 5–10 минут на подтверждение</p>
+          </div>
         </div>
-        <a class="btn btn-primary" href="eupay/">Как оплатить</a>
+
+        <ol class="pay-steps">
+          <li>
+            <span class="pay-num">1</span>
+            <p><b>Переведите</b> на наш Boosty сумму, эквивалентную стоимости товаров на сайте.</p>
+          </li>
+          <li>
+            <span class="pay-num">2</span>
+            <p><b>Создайте тикет в <a href="https://discord.gg/DGthvPcgk8" target="_blank" rel="noopener">Discord</a></b> или напишите в <a href="https://t.me/w_smp_bot" target="_blank" rel="noopener">поддержку в Telegram</a>: приложите чек, список товаров и игровой ник.</p>
+          </li>
+        </ol>
+
+        <a class="btn btn-primary" href="https://boosty.to/w_smp/donate" target="_blank" rel="noopener">
+          Перейти на Boosty
+          <svg class="ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+        </a>
+      </div>
+
+      <div class="pay-qr">
+        <b>QR-код</b>
+        <img src="../img/boosty-qr.png" alt="QR-код для перехода на страницу Boosty WardenSMP" width="180" height="180">
+        <p>Отсканируйте с телефона — откроется страница Boosty</p>
       </div>
     </div>
+
+    <h2 class="pay-title">Что отправить при подтверждении</h2>
+    <ul class="send-card">
+      <li>
+        <span class="send-ic"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M21 16l-5-5-8 8"/></svg></span>
+        <p><b>Скриншот или фото чека</b> об оплате — без чека заказ не подтвердим.</p>
+      </li>
+      <li>
+        <span class="send-ic"><svg class="ic" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg></span>
+        <p><b>Список товаров</b>, которые хотите получить — название и срок.</p>
+      </li>
+      <li>
+        <span class="send-ic"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+        <p><b>Игровой никнейм</b> на сервере WardenSMP.</p>
+      </li>
+    </ul>
   </section>
 </main>
 
 <div id="site-footer"></div>
 
-<script src="js/layout.js?v=7"></script>
-<script src="js/main.js?v=7"></script>
+<script src="../js/layout.js?v=7"></script>
+<script src="../js/main.js?v=7"></script>
 </body>
 </html>
