@@ -115,7 +115,7 @@ let pm = null;
 function buildPm() {
   document.body.insertAdjacentHTML("beforeend", `
     <div class="cart-overlay" id="pm-overlay" data-pm-close></div>
-    <div class="pm" id="pm" role="dialog" aria-modal="true" aria-labelledby="pm-name">
+    <div class="pm" id="pm" role="dialog" aria-modal="true" aria-labelledby="pm-name" tabindex="-1">
       <button class="icon-btn pm-x" type="button" data-pm-close aria-label="Закрыть">
         <svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
@@ -160,7 +160,7 @@ function openProduct(id) {
   pm.overlay.classList.add("open");
   pm.el.classList.add("open");
   document.body.classList.add("lock");
-  pm.el.querySelector(".pm-x").focus();
+  pm.el.focus();
 }
 function closeProduct() {
   if (!pm) return;
@@ -195,7 +195,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key !== "Tab") return;
   const f = [...pm.el.querySelectorAll("button:not(:disabled)")];
   const first = f[0], last = f[f.length - 1];
-  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  if (e.shiftKey && (document.activeElement === first || document.activeElement === pm.el)) { e.preventDefault(); last.focus(); }
   else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
 });
 
