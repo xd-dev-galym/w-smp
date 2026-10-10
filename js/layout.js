@@ -56,7 +56,6 @@
         <li><a href="${root}rules.html">Правила</a></li>
         <li><a href="${root}media.html">Стать медиа</a></li>
         <li><a href="${root}contacts.html">Контакты</a></li>
-        <li><a href="${root}eupay/">Как оплатить</a></li>
       </ul>
     </div>
     <div>
