@@ -73,7 +73,7 @@ const PRODUCTS = [
   // Категория «Другое»
   { id: "unmute", name: "Размут", cat: "other", type: "item", price: 49 },
   { id: "unban", name: "Разбан", cat: "other", type: "item", price: 139 },
-  { id: "varda", name: "Донат валюта Варды", cat: "other", type: "currency", icon: "coin" },
+  { id: "varda", name: "Варды", cat: "other", type: "currency", icon: "coin" },
 ];
 
 // Корзина (хранится в браузере). Записи: привилегия { id, term }, услуга { id }, валюта { id, rub }
