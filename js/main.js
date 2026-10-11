@@ -155,16 +155,16 @@ function vardaPanel() {
         <input id="vd-range" class="vd-range" type="range" min="0" max="1000" step="1" aria-label="Сумма в рублях">
         <div class="vd-scale"><span>${fmtNum(VARDA.min)} ₽</span><span>${fmtNum(VARDA.max)} ₽</span></div>
         <div class="vd-presets">${VARDA.presets.map((n) => `<button type="button" data-rub="${n}" aria-pressed="false">${fmtNum(n)} ₽</button>`).join("")}</div>
-      </div>
-      <aside class="vd-side">
-        <p class="vd-box-title">Скидка за объём</p>
-        <div class="vd-tiers" id="vd-tiers"></div>
         <div class="vd-sum">
           <p class="vd-get" id="vd-get"></p>
           <span class="vd-price" id="vd-price"></span>
           <p class="vd-sale" id="vd-sale"></p>
           <button class="btn btn-primary" id="vd-add" type="button">В корзину</button>
         </div>
+      </div>
+      <aside class="vd-side">
+        <p class="vd-box-title">Скидка за объём</p>
+        <div class="vd-tiers" id="vd-tiers"></div>
       </aside>
     </section>`;
 }
