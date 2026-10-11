@@ -71,8 +71,15 @@ const PRODUCTS = [
       perks: [["Точек дома", "2"], ["Слотов на аукционе", "5"], ["Радиус неара", "90"], ["Кулдаун перед телепортом", "6 сек"]],
     } },
   // Категория «Другое»
-  { id: "unmute", name: "Размут", cat: "other", type: "item", price: 49 },
-  { id: "unban", name: "Разбан", cat: "other", type: "item", price: 139 },
+  { id: "unmute", name: "Размут", cat: "other", type: "item", price: 49,
+    about: ["Получите размут моментально!"] },
+  { id: "unban", name: "Разбан", cat: "other", type: "item", price: 139,
+    about: [
+      "Получите разбан моментально!",
+      "Разбан получает ИСКЛЮЧИТЕЛЬНО 1 АККАУНТ",
+      "Для каждого забаненного аккаунта, вы должны купить отдельный разбан иначе вы получите повторный бан за «обход блокировки»",
+    ],
+    warn: "ВНИМАНИЕ! ЕСЛИ ВЫ ЯВЛЯЕТЕСЬ ЧСП ТО ВЫ НЕ ПОЛУЧИТЕ РАЗБАН!" },
   { id: "varda", name: "Варды", cat: "varda", type: "currency", icon: "coin" },
 ];
 
@@ -229,10 +236,13 @@ paintCart();
 // Возможности привилегии: commands = [["описание", "/команда"]], perks = [["название", "значение"]]
 const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 function featHtml(p) {
+  const about = (p.about || []).map((t) => `<p class="pm-about">${esc(t)}</p>`).join("");
+  const warn = p.warn ? `<p class="pm-warn">${esc(p.warn)}</p>` : "";
   const f = p.features;
-  if (!f) return "";
+  if (!f) return about + warn;
   const block = (title, rows) => rows && rows.length ? `<section><h3>${title}</h3><ul class="feat-list">${rows.join("")}</ul></section>` : "";
-  return block("Команды", (f.commands || []).map(([t, c]) => `<li>${esc(t)} — <code>${esc(c)}</code></li>`))
+  return about + warn
+       + block("Команды", (f.commands || []).map(([t, c]) => `<li>${esc(t)} — <code>${esc(c)}</code></li>`))
        + block("Возможности", (f.perks || []).map(([l, v]) => `<li>${esc(l)}${v ? `: <b>${esc(v)}</b>` : ""}</li>`));
 }
 
