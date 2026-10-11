@@ -473,3 +473,12 @@ button.card-name:hover { color: var(--accent); }
 .vd-sum .vd-get { margin: 0; }
 .vd-sale { margin: 0; color: var(--accent); font-weight: 600; font-size: 0.9rem; }
 .vd-sale:empty { display: none; }
+
+/* 404 */
+.nf { display: grid; justify-items: center; align-content: center; gap: 0.9rem; min-height: 60vh; padding: 3rem 1.25rem; text-align: center; }
+.nf-code { color: var(--accent); font: 700 clamp(5rem, 18vw, 9rem)/1 var(--font-head); text-shadow: 0 0 60px var(--glow); }
+.nf h1 { margin: 0; font: 700 clamp(1.4rem, 3.5vw, 2rem)/1.2 var(--font-head); }
+.nf p { margin: 0; color: var(--muted); font-size: 1.05rem; }
+.nf-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; margin-top: 0.8rem; }
+.btn-outline { background: transparent; border-color: var(--accent); color: var(--text); }
+.btn-outline:hover { background: rgba(34, 160, 254, 0.1); box-shadow: 0 0 24px var(--glow); color: var(--text); }
