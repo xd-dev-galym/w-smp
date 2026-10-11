@@ -489,3 +489,8 @@ button.card-name:hover { color: var(--accent); }
   .vd-buy { grid-template-columns: 1fr; }
   .vd-sum { border-left: 0; border-top: 1px solid var(--line); }
 }
+
+/* Description and warning in the product window */
+.pm-about { margin: 0; color: var(--muted); }
+.pm-about:first-child { color: var(--text); font-weight: 600; font-size: 1.05rem; }
+.pm-warn { margin: 0; padding: 0.85rem 1rem; background: rgba(255, 77, 94, 0.08); border: 1px solid rgba(255, 77, 94, 0.45); border-radius: 12px; color: #ff7a87; font-weight: 700; font-size: 0.9rem; line-height: 1.4; }
