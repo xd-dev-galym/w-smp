@@ -425,54 +425,10 @@ button.card-name:hover { color: var(--accent); }
 .fill { padding: 0.05rem 0.4rem; background: rgba(255, 196, 64, 0.16); color: #ffd37a; border-radius: 6px; }
 @media (max-width: 480px) { .cl { grid-template-columns: 2.8rem 1fr; gap: 0 0.7rem; } }
 
-/* Donate currency (Варды) in the product window */
 .pm-terms:empty { display: none; }
 .pm-note { margin: 0; color: var(--muted); font-size: 0.9rem; }
 .pm-note:empty { display: none; }
-.vd { display: grid; gap: 0.9rem; }
-.vd-field { display: flex; align-items: center; gap: 0.8rem; padding: 0 1rem; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
-.vd-field:focus-within { border-color: var(--accent); }
-.vd-field span { color: var(--muted); font-size: 0.85rem; }
-.vd-field b { color: var(--muted); font-weight: 500; }
-.vd-field input { flex: 1; min-width: 0; padding: 0.8rem 0; background: none; border: 0; outline: 0; color: var(--text); font: 600 1.15rem var(--font-body); -moz-appearance: textfield; appearance: textfield; text-align: right; }
-.vd-field input::-webkit-outer-spin-button, .vd-field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.vd-range { --p: 0%; width: 100%; height: 6px; margin: 0.4rem 0 0; border-radius: 3px; outline: none; cursor: pointer; -webkit-appearance: none; appearance: none; background: linear-gradient(90deg, var(--accent) var(--p), var(--panel-2) var(--p)); }
-.vd-range::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); box-shadow: 0 0 0 1px var(--accent), 0 0 14px var(--glow); }
-.vd-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); box-shadow: 0 0 0 1px var(--accent), 0 0 14px var(--glow); }
-.vd-scale { display: flex; justify-content: space-between; margin-top: -0.4rem; color: var(--muted); font-size: 0.8rem; }
-.vd-presets { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.vd-presets button { padding: 0.4rem 0.8rem; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; color: var(--muted); font: 600 0.85rem var(--font-body); cursor: pointer; }
-.vd-presets button:hover { color: var(--text); border-color: var(--accent); }
-.vd-get { margin: 0; color: var(--muted); }
-.vd-get b { color: var(--text); font: 700 1.25rem var(--font-head); }
 
-/* Варды: панель вместо карточек */
-.vd-panel { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 340px; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; }
-.vd-main { display: grid; gap: 0.9rem; align-content: start; padding: clamp(1.4rem, 3vw, 2rem); }
-.vd-main h2 { margin: 0; font: 700 1.5rem var(--font-head); }
-.vd-lead { margin: 0; color: var(--muted); }
-.vd-side { display: grid; gap: 0.9rem; align-content: start; justify-items: stretch; padding: clamp(1.4rem, 3vw, 2rem); background: radial-gradient(circle at 30% 20%, #11263a, var(--panel-2)); border-left: 1px solid var(--line); }
-.vd-icon { color: #2a5a85; }
-.vd-icon .ic { width: 3.5rem; height: 3.5rem; stroke-width: 1.3; }
-.vd-price { font: 700 2rem/1 var(--font-head); }
-.vd-side .btn { width: 100%; }
-.vd-presets button[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); background: rgba(34, 160, 254, 0.12); }
-@media (max-width: 800px) {
-  .vd-panel { grid-template-columns: 1fr; }
-  .vd-side { border-left: 0; border-top: 1px solid var(--line); }
-}
-.vd-box-title { margin: 0; color: var(--muted); font: 600 0.75rem var(--font-body); letter-spacing: 0.12em; text-transform: uppercase; }
-.vd-tiers { display: grid; gap: 0.5rem; }
-.vd-tier { display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem 0.75rem; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
-.vd-tier.on { background: rgba(34, 160, 254, 0.1); border-color: rgba(34, 160, 254, 0.6); }
-.vd-pct { padding: 0.15rem 0.5rem; background: rgba(34, 160, 254, 0.16); border-radius: 8px; color: var(--accent); font-weight: 700; font-size: 0.85rem; }
-.vd-from { flex: 1; font-weight: 600; }
-.vd-need { color: var(--muted); font-size: 0.85rem; }
-.vd-tier .ic { color: var(--accent); stroke-width: 2.4; }
-.vd-sum { display: grid; gap: 0.7rem; margin-top: 0.3rem; padding-top: 1rem; border-top: 1px solid var(--line); }
-.vd-sum .vd-get { margin: 0; }
-.vd-sale { margin: 0; color: var(--accent); font-weight: 600; font-size: 0.9rem; }
-.vd-sale:empty { display: none; }
 
 /* 404 */
 .nf { display: grid; justify-items: center; align-content: center; gap: 0.9rem; min-height: 60vh; padding: 3rem 1.25rem; text-align: center; }
@@ -483,17 +439,53 @@ button.card-name:hover { color: var(--accent); }
 .btn-outline { background: transparent; border-color: var(--accent); color: var(--text); }
 .btn-outline:hover { background: rgba(34, 160, 254, 0.1); box-shadow: 0 0 24px var(--glow); color: var(--text); }
 
-/* Варды v2: две отдельные плашки (слева покупка, справа скидка за объём), всё по центру */
-.vd-panel { gap: 1.2rem; grid-template-columns: 1fr 340px; background: none; border: 0; border-radius: 0; overflow: visible; }
-.vd-main, .vd-side { align-content: center; border-radius: 22px; border: 1px solid var(--line); }
-.vd-main { justify-items: stretch; gap: 1rem; text-align: center; background: var(--panel); }
-.vd-side { justify-items: stretch; background: radial-gradient(circle at 30% 0%, #11263a, var(--panel-2)); border-left: 1px solid var(--line); }
-.vd-box-title { text-align: center; }
-.vd-presets { justify-content: center; }
-.vd-main .vd-sum { justify-items: center; margin-top: 0.4rem; text-align: center; }
-.vd-main .vd-sum .btn { width: 100%; max-width: 420px; }
-.vd-main .vd-sale { justify-self: center; }
+
+/* Варды: сверху плашка «Скидка за объём», ниже покупка */
+.vd-panel { grid-column: 1 / -1; display: grid; gap: 1.2rem; }
+.vd-disc { padding: clamp(1.1rem, 2.5vw, 1.6rem); background: radial-gradient(circle at 50% 0%, #11263a, var(--panel-2)); border: 1px solid var(--line); border-radius: 22px; }
+.vd-disc-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.3rem 1rem; margin-bottom: 1rem; }
+.vd-box-title { margin: 0; color: var(--text); font: 700 1.05rem var(--font-head); }
+.vd-disc-hint { color: var(--muted); font-size: 0.85rem; }
+.vd-tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.7rem; }
+.vd-tier { display: grid; justify-items: center; align-content: center; gap: 0.45rem; padding: 0.9rem 0.5rem; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; text-align: center; }
+.vd-tier.on { background: rgba(34, 160, 254, 0.12); border-color: rgba(34, 160, 254, 0.65); }
+.vd-pct { padding: 0.2rem 0.65rem; background: rgba(34, 160, 254, 0.16); border-radius: 9px; color: var(--accent); font-weight: 700; font-size: 1rem; }
+.vd-from { font-weight: 600; }
+.vd-need { color: var(--muted); font-size: 0.85rem; }
+.vd-tier .ic { color: var(--accent); stroke-width: 2.4; }
+
+.vd-buy { display: grid; grid-template-columns: 1fr 360px; overflow: hidden; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; }
+.vd-form { display: grid; gap: 1.1rem; align-content: center; padding: clamp(1.4rem, 3vw, 2rem); }
+.vd-head { display: flex; align-items: center; gap: 1rem; }
+.vd-coin { display: grid; place-items: center; flex: none; width: 52px; height: 52px; background: rgba(34, 160, 254, 0.14); border-radius: 14px; color: var(--accent); }
+.vd-coin .ic { width: 1.5rem; height: 1.5rem; }
+.vd-head h2 { margin: 0; font: 700 1.5rem var(--font-head); }
+.vd-lead { margin: 0.15rem 0 0; color: var(--muted); font-size: 0.95rem; }
+.vd-field { display: flex; align-items: center; gap: 0.8rem; padding: 0 1rem; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; }
+.vd-field:focus-within { border-color: var(--accent); }
+.vd-field span { color: var(--muted); font-size: 0.85rem; }
+.vd-field b { color: var(--muted); font-weight: 500; }
+.vd-field input { flex: 1; min-width: 0; padding: 0.85rem 0; background: none; border: 0; outline: 0; color: var(--text); font: 600 1.15rem var(--font-body); text-align: right; -moz-appearance: textfield; appearance: textfield; }
+.vd-field input::-webkit-outer-spin-button, .vd-field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.vd-range { --p: 0%; display: block; width: 100%; height: 6px; margin: 0.5rem 0 0; border-radius: 3px; outline: none; cursor: pointer; -webkit-appearance: none; appearance: none; background: linear-gradient(90deg, var(--accent) var(--p), var(--panel-2) var(--p)); }
+.vd-range::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); box-shadow: 0 0 0 1px var(--accent), 0 0 14px var(--glow); }
+.vd-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); box-shadow: 0 0 0 1px var(--accent), 0 0 14px var(--glow); }
+.vd-scale { display: flex; justify-content: space-between; margin-top: 0.5rem; color: var(--muted); font-size: 0.8rem; }
+.vd-presets { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.vd-presets button { padding: 0.45rem 0.9rem; background: var(--panel-2); border: 1px solid var(--line); border-radius: 9px; color: var(--muted); font: 600 0.85rem var(--font-body); cursor: pointer; }
+.vd-presets button:hover { color: var(--text); border-color: var(--accent); }
+.vd-presets button[aria-pressed="true"] { background: rgba(34, 160, 254, 0.12); border-color: var(--accent); color: var(--accent); }
+
+.vd-sum { display: grid; align-content: center; gap: 1.1rem; padding: clamp(1.4rem, 3vw, 2rem); text-align: center; background: radial-gradient(circle at 30% 0%, #11263a, var(--panel-2)); border-left: 1px solid var(--line); }
+.vd-row { display: grid; gap: 0.3rem; }
+.vd-row + .vd-row { padding-top: 1.1rem; border-top: 1px solid var(--line); }
+.vd-row > span { color: var(--muted); font-size: 0.9rem; }
+.vd-get { margin: 0; font: 700 1.5rem/1.2 var(--font-head); }
+.vd-price { font: 700 2.2rem/1.1 var(--font-head); }
+.vd-sale { margin: 0.2rem 0 0; color: var(--accent); font-weight: 600; font-size: 0.9rem; }
+.vd-sale:empty { display: none; }
+.vd-sum .btn { width: 100%; }
 @media (max-width: 800px) {
-  .vd-panel { grid-template-columns: 1fr; }
-  .vd-side { border-top: 1px solid var(--line); }
+  .vd-buy { grid-template-columns: 1fr; }
+  .vd-sum { border-left: 0; border-top: 1px solid var(--line); }
 }
