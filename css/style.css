@@ -447,11 +447,11 @@ button.card-name:hover { color: var(--accent); }
 .vd-get b { color: var(--text); font: 700 1.25rem var(--font-head); }
 
 /* Варды: панель вместо карточек */
-.vd-panel { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 320px; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; }
+.vd-panel { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 340px; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; }
 .vd-main { display: grid; gap: 0.9rem; align-content: start; padding: clamp(1.4rem, 3vw, 2rem); }
 .vd-main h2 { margin: 0; font: 700 1.5rem var(--font-head); }
 .vd-lead { margin: 0; color: var(--muted); }
-.vd-side { display: grid; gap: 1rem; align-content: center; justify-items: start; padding: clamp(1.4rem, 3vw, 2rem); background: radial-gradient(circle at 30% 20%, #11263a, var(--panel-2)); border-left: 1px solid var(--line); }
+.vd-side { display: grid; gap: 0.9rem; align-content: start; justify-items: stretch; padding: clamp(1.4rem, 3vw, 2rem); background: radial-gradient(circle at 30% 20%, #11263a, var(--panel-2)); border-left: 1px solid var(--line); }
 .vd-icon { color: #2a5a85; }
 .vd-icon .ic { width: 3.5rem; height: 3.5rem; stroke-width: 1.3; }
 .vd-price { font: 700 2rem/1 var(--font-head); }
@@ -461,3 +461,15 @@ button.card-name:hover { color: var(--accent); }
   .vd-panel { grid-template-columns: 1fr; }
   .vd-side { border-left: 0; border-top: 1px solid var(--line); }
 }
+.vd-box-title { margin: 0; color: var(--muted); font: 600 0.75rem var(--font-body); letter-spacing: 0.12em; text-transform: uppercase; }
+.vd-tiers { display: grid; gap: 0.5rem; }
+.vd-tier { display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem 0.75rem; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.vd-tier.on { background: rgba(34, 160, 254, 0.1); border-color: rgba(34, 160, 254, 0.6); }
+.vd-pct { padding: 0.15rem 0.5rem; background: rgba(34, 160, 254, 0.16); border-radius: 8px; color: var(--accent); font-weight: 700; font-size: 0.85rem; }
+.vd-from { flex: 1; font-weight: 600; }
+.vd-need { color: var(--muted); font-size: 0.85rem; }
+.vd-tier .ic { color: var(--accent); stroke-width: 2.4; }
+.vd-sum { display: grid; gap: 0.7rem; margin-top: 0.3rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.vd-sum .vd-get { margin: 0; }
+.vd-sale { margin: 0; color: var(--accent); font-weight: 600; font-size: 0.9rem; }
+.vd-sale:empty { display: none; }
