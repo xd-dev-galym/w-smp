@@ -482,3 +482,18 @@ button.card-name:hover { color: var(--accent); }
 .nf-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; margin-top: 0.8rem; }
 .btn-outline { background: transparent; border-color: var(--accent); color: var(--text); }
 .btn-outline:hover { background: rgba(34, 160, 254, 0.1); box-shadow: 0 0 24px var(--glow); color: var(--text); }
+
+/* Варды v2: две отдельные плашки (слева покупка, справа скидка за объём), всё по центру */
+.vd-panel { gap: 1.2rem; grid-template-columns: 1fr 340px; background: none; border: 0; border-radius: 0; overflow: visible; }
+.vd-main, .vd-side { align-content: center; border-radius: 22px; border: 1px solid var(--line); }
+.vd-main { justify-items: stretch; gap: 1rem; text-align: center; background: var(--panel); }
+.vd-side { justify-items: stretch; background: radial-gradient(circle at 30% 0%, #11263a, var(--panel-2)); border-left: 1px solid var(--line); }
+.vd-box-title { text-align: center; }
+.vd-presets { justify-content: center; }
+.vd-main .vd-sum { justify-items: center; margin-top: 0.4rem; text-align: center; }
+.vd-main .vd-sum .btn { width: 100%; max-width: 420px; }
+.vd-main .vd-sale { justify-self: center; }
+@media (max-width: 800px) {
+  .vd-panel { grid-template-columns: 1fr; }
+  .vd-side { border-top: 1px solid var(--line); }
+}
