@@ -445,3 +445,19 @@ button.card-name:hover { color: var(--accent); }
 .vd-presets button:hover { color: var(--text); border-color: var(--accent); }
 .vd-get { margin: 0; color: var(--muted); }
 .vd-get b { color: var(--text); font: 700 1.25rem var(--font-head); }
+
+/* Варды: панель вместо карточек */
+.vd-panel { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 320px; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; }
+.vd-main { display: grid; gap: 0.9rem; align-content: start; padding: clamp(1.4rem, 3vw, 2rem); }
+.vd-main h2 { margin: 0; font: 700 1.5rem var(--font-head); }
+.vd-lead { margin: 0; color: var(--muted); }
+.vd-side { display: grid; gap: 1rem; align-content: center; justify-items: start; padding: clamp(1.4rem, 3vw, 2rem); background: radial-gradient(circle at 30% 20%, #11263a, var(--panel-2)); border-left: 1px solid var(--line); }
+.vd-icon { color: #2a5a85; }
+.vd-icon .ic { width: 3.5rem; height: 3.5rem; stroke-width: 1.3; }
+.vd-price { font: 700 2rem/1 var(--font-head); }
+.vd-side .btn { width: 100%; }
+.vd-presets button[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); background: rgba(34, 160, 254, 0.12); }
+@media (max-width: 800px) {
+  .vd-panel { grid-template-columns: 1fr; }
+  .vd-side { border-left: 0; border-top: 1px solid var(--line); }
+}
