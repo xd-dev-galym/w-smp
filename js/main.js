@@ -148,24 +148,35 @@ function cardPrice(p) {
 function vardaPanel() {
   return `
     <section class="vd-panel">
-      <div class="vd-main">
-        <h2>Варды</h2>
-        <p class="vd-lead">1 ₽ = ${vardsText(VARDA.perRub)}. Сумма от ${fmtNum(VARDA.min)} до ${fmtNum(VARDA.max)} ₽.</p>
-        <label class="vd-field"><span>Сумма</span><input id="vd-num" type="number" inputmode="numeric" min="${VARDA.min}" max="${VARDA.max}" step="1"><b>₽</b></label>
-        <input id="vd-range" class="vd-range" type="range" min="0" max="1000" step="1" aria-label="Сумма в рублях">
-        <div class="vd-scale"><span>${fmtNum(VARDA.min)} ₽</span><span>${fmtNum(VARDA.max)} ₽</span></div>
-        <div class="vd-presets">${VARDA.presets.map((n) => `<button type="button" data-rub="${n}" aria-pressed="false">${fmtNum(n)} ₽</button>`).join("")}</div>
+      <div class="vd-disc">
+        <div class="vd-disc-head">
+          <p class="vd-box-title">Скидка за объём</p>
+          <span class="vd-disc-hint">Чем больше сумма, тем больше скидка</span>
+        </div>
+        <div class="vd-tiers" id="vd-tiers"></div>
+      </div>
+      <div class="vd-buy">
+        <div class="vd-form">
+          <div class="vd-head">
+            <span class="vd-coin">${ICONS.coin}</span>
+            <div>
+              <h2>Варды</h2>
+              <p class="vd-lead">1 ₽ = ${vardsText(VARDA.perRub)}. Сумма от ${fmtNum(VARDA.min)} до ${fmtNum(VARDA.max)} ₽.</p>
+            </div>
+          </div>
+          <label class="vd-field"><span>Сумма</span><input id="vd-num" type="number" inputmode="numeric" min="${VARDA.min}" max="${VARDA.max}" step="1"><b>₽</b></label>
+          <div>
+            <input id="vd-range" class="vd-range" type="range" min="0" max="1000" step="1" aria-label="Сумма в рублях">
+            <div class="vd-scale"><span>${fmtNum(VARDA.min)} ₽</span><span>${fmtNum(VARDA.max)} ₽</span></div>
+          </div>
+          <div class="vd-presets">${VARDA.presets.map((n) => `<button type="button" data-rub="${n}" aria-pressed="false">${fmtNum(n)} ₽</button>`).join("")}</div>
+        </div>
         <div class="vd-sum">
-          <p class="vd-get" id="vd-get"></p>
-          <span class="vd-price" id="vd-price"></span>
-          <p class="vd-sale" id="vd-sale"></p>
+          <div class="vd-row"><span>Вы получите</span><p class="vd-get" id="vd-get"></p></div>
+          <div class="vd-row"><span>К оплате</span><b class="vd-price" id="vd-price"></b><p class="vd-sale" id="vd-sale"></p></div>
           <button class="btn btn-primary" id="vd-add" type="button">В корзину</button>
         </div>
       </div>
-      <aside class="vd-side">
-        <p class="vd-box-title">Скидка за объём</p>
-        <div class="vd-tiers" id="vd-tiers"></div>
-      </aside>
     </section>`;
 }
 function paintVarda() {
@@ -177,7 +188,7 @@ function paintVarda() {
   range.style.setProperty("--p", range.value / 10 + "%");
   document.querySelectorAll(".vd-presets button").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.rub) === vdRub)));
   const d = discountFor(vdRub);
-  document.getElementById("vd-get").innerHTML = `Вы получите <b>${vardsText(vardsFor(vdRub))}</b>`;
+  document.getElementById("vd-get").textContent = vardsText(vardsFor(vdRub));
   document.getElementById("vd-price").textContent = money(payFor(vdRub));
   document.getElementById("vd-sale").textContent = d ? `Скидка за объём: ${d}%` : "";
   const check = '<svg class="ic" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>';
