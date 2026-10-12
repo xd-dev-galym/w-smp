@@ -233,3 +233,22 @@
       .catch(() => { hint.textContent = "Не удалось скопировать заказ. Отправь его боту вручную:\n" + text; });
   });
 })();
+
+// Плавный уход со страницы: контент гаснет, потом открывается следующая страница (она сама плавно появляется)
+(function () {
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // при возврате кнопкой «Назад» страница может прийти из кеша уже «погасшей»
+  window.addEventListener("pageshow", () => document.body.classList.remove("leaving"));
+  if (reduce) return;
+  document.addEventListener("click", (e) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest("a[href]");
+    if (!a || a.target === "_blank" || a.hasAttribute("download") || a.closest("[data-open]")) return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin) return;                                   // внешние ссылки и mailto
+    if (url.pathname === location.pathname && url.search === location.search) return; // якорь на этой же странице
+    e.preventDefault();
+    document.body.classList.add("leaving");
+    setTimeout(() => { location.href = a.href; }, 220);
+  });
+})();
