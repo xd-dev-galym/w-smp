@@ -496,3 +496,16 @@ button.card-name:hover { color: var(--accent); }
 .pm-warn { margin: 0; padding: 0.85rem 1rem; background: rgba(255, 77, 94, 0.08); border: 1px solid rgba(255, 77, 94, 0.45); border-radius: 12px; color: #ff7a87; font-weight: 700; font-size: 0.9rem; line-height: 1.4; }
 .cl.sub { padding-left: 2rem; }
 .cl.sub .cl-n { color: var(--muted); }
+
+/* Logo hover: white to blue */
+.logo { transition: color 0.3s ease; }
+.logo:hover { color: var(--accent); }
+
+/* Page transitions: content fades in; on leaving it fades out (header stays in place) */
+@keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
+main, .site-footer { animation: page-in 0.35s ease; }
+body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0.22s ease; }
+@media (prefers-reduced-motion: reduce) {
+  main, .site-footer { animation: none; }
+  .logo { transition: none; }
+}
