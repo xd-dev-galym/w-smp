@@ -509,3 +509,27 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
   main, .site-footer { animation: none; }
   .logo { transition: none; }
 }
+
+/* Поиск в ассортименте */
+.shop-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.6rem; }
+.shop-bar .cats { margin-bottom: 0; }
+.search { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
+.search-input {
+  width: 0; min-width: 0; padding: 0; opacity: 0; border: 1px solid transparent; border-radius: 10px;
+  background: var(--panel); color: var(--text); font: 500 0.95rem var(--font-body);
+  transition: width 0.4s ease, opacity 0.3s ease, padding 0.4s ease, border-color 0.3s ease;
+}
+.search-input::placeholder { color: var(--muted); }
+.search.open .search-input { width: min(260px, 60vw); opacity: 1; padding: 0.5rem 0.9rem; border-color: var(--accent); }
+.search-btn {
+  display: grid; place-items: center; width: 2.6rem; height: 2.4rem; padding: 0; flex: 0 0 auto;
+  border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+.search-btn:hover { color: var(--text); border-color: var(--accent); }
+.search-btn[aria-expanded="true"] { color: var(--accent); border-color: var(--accent); background: rgba(34, 160, 254, 0.14); }
+.search.is-hidden { display: none; }
+.search-empty { grid-column: 1 / -1; margin: 2rem 0; color: var(--muted); text-align: center; }
+@media (prefers-reduced-motion: reduce) {
+  .search-input, .search-btn { transition: none; }
+}
