@@ -27,7 +27,7 @@
           <span class="badge"></span>
         </button>
         <button class="icon-btn nav-toggle" type="button" aria-expanded="false" aria-controls="nav" aria-label="Меню">
-          ${ic('<path d="M4 7h16M4 12h16M4 17h16"/>')}
+          <span class="burger" aria-hidden="true"><i></i><i></i><i></i></span>
         </button>
       </div>
     </header>
