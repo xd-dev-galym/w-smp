@@ -107,7 +107,13 @@ button { font-family: inherit; }
 .card-img .ic { width: 3rem; height: 3rem; stroke-width: 1.5; }
 .card-img img { width: 100%; height: 100%; object-fit: cover; }
 .card-body { display: flex; flex-direction: column; flex: 1; gap: 0.3rem; padding: 1rem 1.1rem 1.1rem; }
-.card-cat { color: var(--accent); font-size: 0.78rem; font-weight: 600; }
+.card-cat {
+  align-self: flex-start; padding: 0.28rem 0.65rem; border-radius: 8px;
+  background: rgba(34, 160, 254, 0.15); color: var(--accent);
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+}
+.card-cat[data-cat="varda"] { background: rgba(255, 79, 216, 0.16); color: #ff4fd8; }
+.card-cat[data-cat="priv"] { background: rgba(255, 77, 77, 0.16); color: #ff4d4d; }
 .card-name { color: var(--text); font: 600 1.1rem/1.3 var(--font-body); }
 .card-name:hover { color: var(--text); }
 .card-price { color: var(--accent); font: 600 1.15rem var(--font-body); margin-bottom: 0.8rem; }
