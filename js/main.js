@@ -501,6 +501,38 @@ if (online) {
 }
 
 // Мобильное меню
+const navPill = document.querySelector(".nav");
+if (navPill) {
+  const pill = document.createElement("span");
+  pill.className = "nav-pill";
+  pill.setAttribute("aria-hidden", "true");
+  navPill.prepend(pill);
+  const current = () => navPill.querySelector('a[aria-current="page"]');
+  let hovered = null;
+  function placePill(a) {
+    const r = a ? a.getBoundingClientRect() : null;
+    if (!r || r.width === 0) { pill.style.opacity = "0"; return; }
+    const n = navPill.getBoundingClientRect();
+    const x = r.left - n.left - navPill.clientLeft, y = r.top - n.top - navPill.clientTop;
+    pill.style.opacity = "1";
+    pill.style.width = r.width + "px";
+    pill.style.height = r.height + "px";
+    pill.style.transform = `translate(${x}px, ${y}px)`;
+  }
+  const refreshPill = () => placePill(hovered || current());
+  navPill.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("mouseenter", () => { hovered = a; refreshPill(); });
+    a.addEventListener("focus", () => { hovered = a; refreshPill(); });
+    a.addEventListener("blur", () => { hovered = null; refreshPill(); });
+  });
+  navPill.addEventListener("mouseleave", () => { hovered = null; refreshPill(); });
+  window.addEventListener("resize", refreshPill);
+  new MutationObserver(refreshPill).observe(navPill, { attributes: true, attributeFilter: ["class"] });
+  // первое положение без анимации, потом включаем переходы
+  pill.style.transition = "none";
+  refreshPill();
+  requestAnimationFrame(() => requestAnimationFrame(() => { pill.style.transition = ""; }));
+}
 const toggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".nav");
 if (toggle && nav) {
