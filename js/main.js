@@ -143,6 +143,9 @@ function lineOf(e) {
 
 // ---- Каталог: карточки и категории ----
 const grid = document.getElementById("products");
+const searchBox = document.getElementById("search");
+const searchInput = document.getElementById("search-input");
+const searchBtn = document.getElementById("search-btn");
 let activeCat = "all";
 let vdRub = 100;
 function cardPrice(p) {
@@ -213,7 +216,14 @@ function renderGrid() {
     grid.innerHTML = vardaPanel();
     return paintVarda();
   }
-  grid.innerHTML = PRODUCTS.filter((p) => activeCat === "all" || (p.cat || "priv") === activeCat).map((p) => `
+  const q = searchQuery();
+  const list = PRODUCTS.filter((p) => (activeCat === "all" || (p.cat || "priv") === activeCat)
+    && (!q || p.name.toLowerCase().includes(q)));
+  if (!list.length && q) {
+    grid.innerHTML = `<p class="search-empty">По запросу «${escapeHtml(q)}» ничего не найдено</p>`;
+    return;
+  }
+  grid.innerHTML = list.map((p) => `
     <article class="card">
       <button class="card-img" type="button" data-open="${p.id}" aria-label="${p.name}: выбрать вариант">${ICONS[p.icon || "box"]}</button>
       <div class="card-body">
@@ -227,7 +237,32 @@ function renderGrid() {
 function setCat(id) {
   activeCat = id;
   document.querySelectorAll(".cat[data-cat]").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.cat === id)));
+  // В категории «Варды» поиск не нужен: там одна панель, а не список товаров
+  if (id === "varda") toggleSearch(false);
+  document.querySelectorAll(".search").forEach((x) => x.classList.toggle("is-hidden", id === "varda"));
   renderGrid();
+}
+
+// Поиск товара по названию: строка выезжает слева от кнопки
+function searchQuery() { return searchInput ? searchInput.value.trim().toLowerCase() : ""; }
+function escapeHtml(t) { return String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[c]); }
+function toggleSearch(open) {
+  if (!searchBox) return;
+  const now = typeof open === "boolean" ? open : !searchBox.classList.contains("open");
+  searchBox.classList.toggle("open", now);
+  searchBtn.setAttribute("aria-expanded", String(now));
+  searchBtn.setAttribute("aria-label", now ? "Закрыть поиск" : "Открыть поиск");
+  if (now) {
+    setTimeout(() => searchInput.focus({ preventScroll: true }), 150);
+  } else if (searchInput.value) {
+    searchInput.value = "";
+    renderGrid();
+  }
+}
+if (searchBox) {
+  searchBtn.addEventListener("click", () => toggleSearch());
+  searchInput.addEventListener("input", renderGrid);
+  searchInput.addEventListener("keydown", (e) => { if (e.key === "Escape") toggleSearch(false); });
 }
 renderGrid();
 document.querySelectorAll(".cat[data-cat]").forEach((b) => b.addEventListener("click", () => setCat(b.dataset.cat)));
