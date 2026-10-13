@@ -108,12 +108,13 @@ button { font-family: inherit; }
 .card-img img { width: 100%; height: 100%; object-fit: cover; }
 .card-body { display: flex; flex-direction: column; flex: 1; gap: 0.3rem; padding: 1rem 1.1rem 1.1rem; }
 .card-cat {
-  align-self: flex-start; display: inline-flex; align-items: center; padding: 0.2rem 0.6rem; line-height: 1; border-radius: 6px;
-  background: rgba(34, 160, 254, 0.15); color: var(--accent);
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.2rem 0.6rem; line-height: 1; border-radius: 6px;
+  background: rgba(34, 160, 254, 0.12); border: 1px solid rgba(34, 160, 254, 0.35); color: var(--accent);
   font-size: 0.72rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase;
 }
-.card-cat[data-cat="varda"] { background: rgba(255, 79, 216, 0.16); color: #ff4fd8; }
-.card-cat[data-cat="priv"] { background: rgba(255, 77, 77, 0.16); color: #ff4d4d; }
+.card-cat::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
+.card-cat[data-cat="varda"] { background: rgba(255, 79, 216, 0.14); border-color: rgba(255, 79, 216, 0.4); color: #ff4fd8; }
 .card-name { color: var(--text); font: 600 1.1rem/1.3 var(--font-body); }
 .card-name:hover { color: var(--text); }
 .card-price { color: var(--accent); font: 600 1.15rem var(--font-body); margin-bottom: 0.8rem; }
