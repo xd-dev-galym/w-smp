@@ -80,6 +80,11 @@ const PRODUCTS = [
       "Для каждого забаненного аккаунта, вы должны купить отдельный разбан иначе вы получите повторный бан за «обход блокировки»",
     ],
     warn: "ВНИМАНИЕ! ЕСЛИ ВЫ ЯВЛЯЕТЕСЬ ЧСП ТО ВЫ НЕ ПОЛУЧИТЕ РАЗБАН!" },
+  { id: "title", name: "Кастомный титул", cat: "other", type: "title", price: 129,
+    about: [
+      "Напишите свой титул: только буквы (русские и английские) и цифры, без пробелов и знаков",
+      "Выберите оформление: обычный текст, градиент из двух цветов (HEX) или цвета кодами &",
+    ] },
   { id: "varda", name: "Варды", cat: "varda", type: "currency", icon: "coin" },
 ];
 
@@ -142,6 +147,11 @@ function lineOf(e) {
   const t = typeOf(p);
   if (t === "priv") return TERMS[e.term] ? { p, price: p.prices[e.term], label: TERMS[e.term].full } : null;
   if (t === "item") return { p, price: p.price, label: "Разовая услуга" };
+  if (t === "title") {
+    if (!e.text) return null;
+    const mode = e.mode === "gradient" ? `градиент ${e.c1} → ${e.c2}` : e.mode === "codes" ? "цвета &-кодами" : "обычный текст";
+    return { p, price: p.price, label: `«${esc(e.text)}» · ${mode}` };
+  }
   if (e.rub == null) return null;
   const rub = clampRub(e.rub);
   const d = discountFor(rub);
@@ -157,7 +167,7 @@ let activeCat = "all";
 let vdRub = 100;
 function cardPrice(p) {
   const t = typeOf(p);
-  if (t === "item") return money(p.price);
+  if (t === "item" || t === "title") return money(p.price);
   if (t === "currency") return "от " + money(VARDA.min);
   return "от " + money(Math.min(...p.prices));
 }
@@ -313,7 +323,58 @@ function buildPm() {
   pm = { overlay: g("pm-overlay"), el: g("pm"), img: g("pm-img"), cat: g("pm-cat"), name: g("pm-name"), feat: g("pm-feat"),
          terms: g("pm-terms"), price: g("pm-price"), add: g("pm-add"), id: null, type: "priv", term: 0, next: null, last: null };
 }
+// Кастомный титул: текст из букв и цифр, оформление — обычный, градиент HEX или коды &
+const TT_MAX = 16;
+const TT_LETTERS = /^[A-Za-zА-Яа-яЁё0-9]+$/;
+function ttBody() { return pm.tt.mode === "codes" ? pm.tt.text.replace(/&[0-9a-fk-or]/gi, "") : pm.tt.text; }
+function ttError() {
+  const t = pm.tt.text;
+  if (!t) return "";
+  if (pm.tt.mode === "codes" && t.includes("&") && /&(?![0-9a-fk-or])/i.test(t.replace(/&&/g, ""))) return "Неверный код цвета: используйте &0–9, &a–f, &k–o или &r";
+  if (!TT_LETTERS.test(ttBody())) return "Можно только русские и английские буквы и цифры";
+  return "";
+}
+function ttNext() {
+  if (!pm.tt.text || ttError()) return null;
+  const n = { id: "title", text: pm.tt.text, mode: pm.tt.mode };
+  if (pm.tt.mode === "gradient") { n.c1 = pm.tt.c1; n.c2 = pm.tt.c2; }
+  return n;
+}
+function paintTitleBuy() {
+  const p = PRODUCTS.find((x) => x.id === pm.id);
+  const entry = getCart().find((x) => x.id === pm.id);
+  const next = ttNext();
+  pm.next = next;
+  pm.price.textContent = money(p.price);
+  const err = document.getElementById("tt-err");
+  if (err) err.textContent = ttError();
+  pm.add.disabled = !next;
+  const same = entry && next && JSON.stringify(entry) === JSON.stringify(next);
+  pm.add.textContent = !entry ? "В корзину" : same ? "Открыть корзину" : "Изменить титул";
+}
+function paintTitle() {
+  const modes = [["plain", "Обычный"], ["gradient", "Градиент HEX"], ["codes", "Коды &"]];
+  pm.terms.innerHTML = `
+    <div class="tt-modes" role="group" aria-label="Оформление титула">
+      ${modes.map(([k, l]) => `<button class="tt-mode" type="button" data-tmode="${k}" aria-pressed="${pm.tt.mode === k}">${l}</button>`).join("")}
+    </div>
+    <label class="tt-field"><span>Текст титула</span>
+      <input id="tt-text" type="text" maxlength="${TT_MAX}" autocomplete="off" placeholder="Например: Герой2026" value="${esc(pm.tt.text).replace(/"/g, "&quot;")}">
+    </label>
+    ${pm.tt.mode === "gradient" ? `<div class="tt-colors">
+      <label>Цвет 1 <input type="color" id="tt-c1" value="${pm.tt.c1}"></label>
+      <label>Цвет 2 <input type="color" id="tt-c2" value="${pm.tt.c2}"></label>
+    </div>` : ""}
+    ${pm.tt.mode === "codes" ? `<p class="tt-hint">Коды ставятся перед текстом: &amp;c красный, &amp;a зелёный, &amp;l жирный, &amp;r сброс. Пример: &amp;cТитул&amp;l</p>` : ""}
+    <p class="tt-err" id="tt-err" role="alert"></p>`;
+  document.getElementById("tt-text").addEventListener("input", (e) => { pm.tt.text = e.target.value.trim(); paintTitleBuy(); });
+  const c1 = document.getElementById("tt-c1"), c2 = document.getElementById("tt-c2");
+  if (c1) c1.addEventListener("input", (e) => { pm.tt.c1 = e.target.value; paintTitleBuy(); });
+  if (c2) c2.addEventListener("input", (e) => { pm.tt.c2 = e.target.value; paintTitleBuy(); });
+  paintTitleBuy();
+}
 function paintPm() {
+  if (pm.type === "title") return paintTitle();
   const p = PRODUCTS.find((x) => x.id === pm.id);
   const entry = getCart().find((x) => x.id === pm.id);
   let price, next;
@@ -340,6 +401,9 @@ function openProduct(id) {
   pm.id = id;
   pm.type = typeOf(p);
   pm.term = entry && entry.term != null ? entry.term : 0;
+  pm.tt = entry && entry.id === id && entry.text
+    ? { mode: entry.mode || "plain", text: entry.text, c1: entry.c1 || "#22A0FE", c2: entry.c2 || "#ff4fd8" }
+    : { mode: "plain", text: "", c1: "#22A0FE", c2: "#ff4fd8" };
   pm.name.textContent = p.name;
   pm.cat.textContent = CARD_CAT[p.cat || "priv"];
   pm.cat.dataset.cat = p.cat || "priv";
@@ -383,6 +447,8 @@ document.addEventListener("click", (e) => {
   }
   if (!pm) return;
   if (e.target.closest("[data-pm-close]")) return closeProduct();
+  const tmode = e.target.closest("[data-tmode]");
+  if (tmode && pm && pm.type === "title") { pm.tt.mode = tmode.dataset.tmode; return paintTitle(); }
   const term = e.target.closest(".pm-term");
   if (term) { pm.term = Number(term.dataset.term); return paintPm(); }
   if (e.target.closest("#pm-add")) {
