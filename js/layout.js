@@ -6,7 +6,6 @@
   const ic = (d) => `<svg class="ic" viewBox="0 0 24 24">${d}</svg>`;
 
   const links = [
-    ["akcii", "index.html#akcii", "Акции", ic('<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>')],
     ["rules", "rules.html", "Правила", ic('<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>')],
     ["media", "media.html", "Стать медиа", ic('<path d="M3 7h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H3z"/><path d="M17 11l4-2v6l-4-2"/>')],
     ["contacts", "contacts.html", "Контакты", ic('<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>')],
