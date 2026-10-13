@@ -1,541 +1,445 @@
-@import url("https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@500;700&display=swap");
+// Сроки привилегий: порядок совпадает с порядком цен в prices: [1 месяц, 3 месяца, навсегда]
+const TERMS = [
+  { label: "1 мес", full: "1 месяц" },
+  { label: "3 мес", full: "3 месяца" },
+  { label: "Навсегда", full: "Навсегда" },
+];
 
-:root {
-  color-scheme: dark;
-  --bg: #080c12;
-  --panel: #0d141d;
-  --panel-2: #121a24;
-  --line: #1a2736;
-  --accent: #22a0fe;
-  --glow: rgba(34, 160, 254, 0.22);
-  --text: #e8eef5;
-  --muted: #8a9bb0;
-  --ok: #3ddc84;
-  --wrap: 1180px;
-  --font-body: "Onest", system-ui, sans-serif;
-  --font-head: "Unbounded", "Onest", sans-serif;
+// Товары: порядок сверху вниз, от Спонсора к Воину. Цены меняй в prices.
+const PRODUCTS = [
+  { id: "sponsor", name: "Спонсор", prices: [599, 649, 699],
+    features: {
+      commands: [["Просмотр инвентаря игрока", "/invsee <Ник>"], ["Снять бан с игрока", "/unban <Ник>"], ["Выдать бан игроку (до 1 часа)", "/ban <Ник>"]],
+      perks: [["Макс кол-во домов", "10"], ["Слотов на аукционе", "20"], ["Радиус неара", "300"], ["Кулдаун перед телепортом", "0 сек"]],
+    } },
+  { id: "eternity", name: "Eternity", prices: [479, 529, 579],
+    features: {
+      commands: [["Объявление на сервер", "/broadcast"], ["Снять мут с игрока", "/unmute <Ник>"], ["Выдать мут игроку (до 1 часа)", "/amute <Ник>"]],
+      perks: [["Макс кол-во домов", "9"], ["Слотов на аукционе", "19"], ["Радиус неара", "250"], ["Кулдаун перед телепортом", "1 сек"], ["Зачёркнутый текст в чате"]],
+    } },
+  { id: "stinger", name: "Stinger", prices: [419, 459, 499],
+    features: {
+      perks: [["Макс кол-во домов", "9"], ["Слотов на аукционе", "18"], ["Радиус неара", "240"], ["Кулдаун перед телепортом", "1 сек"], ["Жирный текст в чате"], ["Подчёркнутый текст в чате"]],
+    } },
+  { id: "dragon", name: "Dragon", prices: [349, 389, 429],
+    features: {
+      perks: [["Макс кол-во домов", "8"], ["Слотов на аукционе", "16"], ["Радиус неара", "220"], ["Кулдаун перед телепортом", "2 сек"], ["Цветной текст в чате"]],
+    } },
+  { id: "avenger", name: "Avenger", prices: [319, 359, 399],
+    features: {
+      commands: [["Вылечить игрока", "/heal <Ник>"], ["Накормить игрока", "/feed <Ник>"]],
+      perks: [["Макс кол-во домов", "7"], ["Слотов на аукционе", "15"], ["Радиус неара", "200"], ["Кулдаун перед телепортом", "2 сек"]],
+    } },
+  { id: "legend", name: "Legend", prices: [269, 309, 349],
+    features: {
+      commands: [["Личное время", "/ptime"], ["Личная погода", "/pweather"]],
+      perks: [["Макс кол-во домов", "6"], ["Слотов на аукционе", "14"], ["Радиус неара", "180"], ["Кулдаун перед телепортом", "3 сек"]],
+    } },
+  { id: "phantom", name: "Phantom", prices: [229, 269, 309],
+    features: {
+      commands: [["Открыть Эндер сундук", "/enderchest"], ["Встать в режим АФК", "/afk"]],
+      perks: [["Макс кол-во домов", "6"], ["Слотов на аукционе", "13"], ["Радиус неара", "160"], ["Кулдаун перед телепортом", "3 сек"]],
+    } },
+  { id: "master", name: "Master", prices: [179, 219, 259],
+    features: {
+      commands: [["Потушить себя", "/ext"], ["Открыть виртуальную наковальню", "/anvil"], ["Переключить режим ЛС", "/msgtoggle"]],
+      perks: [["Макс кол-во домов", "5"], ["Слотов на аукционе", "11"], ["Радиус неара", "150"], ["Кулдаун перед телепортом", "4 сек"]],
+    } },
+  { id: "ghost", name: "Ghost", prices: [129, 169, 209],
+    features: {
+      commands: [["Телепортироваться вверх", "/top"], ["Открыть кузнечный стол", "/smithtable"], ["Открыть точильный камень", "/grindstone"]],
+      perks: [["Макс кол-во домов", "4"], ["Слотов на аукционе", "10"], ["Радиус неара", "140"], ["Кулдаун перед телепортом", "4 сек"]],
+    } },
+  { id: "paladin", name: "Паладин", prices: [99, 139, 179],
+    features: {
+      commands: [["Открыть ткацкий станок", "/loom"], ["Открыть стол картографа", "/carttable"], ["Открыть камнерез", "/stonecutter"]],
+      perks: [["Макс кол-во домов", "3"], ["Слотов на аукционе", "9"], ["Радиус неара", "130"], ["Кулдаун перед телепортом", "5 сек"]],
+    } },
+  { id: "geroy", name: "Герой", prices: [79, 119, 159],
+    features: {
+      commands: [["Показать глубину/Y-координату", "/depth"], ["Восстановить здоровье", "/heal"], ["Восстановить голод", "/feed"]],
+      perks: [["Макс кол-во домов", "3"], ["Слотов на аукционе", "8"], ["Радиус неара", "120"], ["Кулдаун перед телепортом", "5 сек"]],
+    } },
+  { id: "lord", name: "Лорд", prices: [49, 69, 99],
+    features: {
+      commands: [["Очистить инвентарь", "/clear"], ["Игнорировать игрока", "/ignore"]],
+      perks: [["Точек дома", "2"], ["Слотов на аукционе", "7"], ["Радиус неара", "100"], ["Кулдаун перед телепортом", "6 сек"]],
+    } },
+  { id: "voin", name: "Воин", prices: [19, 39, 59],
+    features: {
+      commands: [["Открыть виртуальный верстак", "/workbench"], ["Надеть предмет на голову", "/hat"]],
+      perks: [["Точек дома", "2"], ["Слотов на аукционе", "5"], ["Радиус неара", "90"], ["Кулдаун перед телепортом", "6 сек"]],
+    } },
+  // Категория «Другое»
+  { id: "unmute", name: "Размут", cat: "other", type: "item", price: 49,
+    about: ["Получите размут моментально!"] },
+  { id: "unban", name: "Разбан", cat: "other", type: "item", price: 139,
+    about: [
+      "Получите разбан моментально!",
+      "Разбан получает ИСКЛЮЧИТЕЛЬНО 1 АККАУНТ",
+      "Для каждого забаненного аккаунта, вы должны купить отдельный разбан иначе вы получите повторный бан за «обход блокировки»",
+    ],
+    warn: "ВНИМАНИЕ! ЕСЛИ ВЫ ЯВЛЯЕТЕСЬ ЧСП ТО ВЫ НЕ ПОЛУЧИТЕ РАЗБАН!" },
+  { id: "varda", name: "Варды", cat: "varda", type: "currency", icon: "coin" },
+];
+
+// Корзина (хранится в браузере). Записи: привилегия { id, term }, услуга { id }, валюта { id, rub }
+const CART_KEY = "wsmp-cart-v2";
+const getCart = () => { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch (e) { return []; } };
+const setCart = (c) => { try { localStorage.setItem(CART_KEY, JSON.stringify(c)); } catch (e) {} };
+const badge = document.querySelector(".badge");
+function paintCart() {
+  const all = getCart(), cart = all.filter((e) => lineOf(e));
+  if (cart.length !== all.length) setCart(cart); // убираем устаревшие записи
+  const n = cart.length;
+  if (badge) { badge.textContent = n; badge.classList.toggle("on", n > 0); }
+}
+const money = (n) => n.toLocaleString("ru-RU") + " ₽";
+const fmtNum = (n) => n.toLocaleString("ru-RU");
+const ICONS = {
+  box: '<svg class="ic" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>',
+  coin: '<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 9l3.5 7 3.5-7"/></svg>',
+};
+
+// Категории товаров (порядок кнопок)
+// Подписи бейджей категорий на карточках (CSS делает их заглавными)
+const CARD_CAT = {
+  priv: "Привилегии",
+  varda: "Донат валюта",
+  other: "Прочее",
+};
+
+const CATS = [
+  { id: "all", label: "Все" },
+  { id: "priv", label: "Привилегии" },
+  { id: "varda", label: "Варды" },
+  { id: "other", label: "Другое" },
+];
+
+// Варды: perRub = сколько Вард дают за 1 ₽ (сейчас 1 ₽ = 1 Варда). min/max = сумма покупки в рублях.
+// tiers = скидка за объём на цену: [от скольки ₽, скидка %]. Скидка небольшая, максимум 10%.
+const VARDA = { min: 10, max: 10000, perRub: 1, presets: [100, 500, 1000, 2500, 5000], tiers: [[500, 2], [1000, 4], [2500, 6], [5000, 8], [10000, 10]] };
+const typeOf = (p) => p.type || "priv";
+const clampRub = (n) => Math.min(VARDA.max, Math.max(VARDA.min, Math.round(Number(n)) || VARDA.min));
+const vardsFor = (rub) => Math.round(rub * VARDA.perRub);
+const discountFor = (rub) => VARDA.tiers.reduce((d, [from, pct]) => (rub >= from ? pct : d), 0);
+const payFor = (rub) => Math.round((rub * (100 - discountFor(rub))) / 100);
+// «1 вард, 2 варда, 5 вардов»
+const vardWord = (n) => { const a = n % 100, b = n % 10; return a >= 11 && a <= 14 ? "вардов" : b === 1 ? "вард" : b >= 2 && b <= 4 ? "варда" : "вардов"; };
+const vardsText = (n) => `${fmtNum(n)} ${vardWord(n)}`;
+// Положение ползунка (0..1000) в логарифмической шкале: так удобно выбирать и 10 ₽, и 10 000 ₽
+const posOf = (v) => Math.round((Math.log(v / VARDA.min) / Math.log(VARDA.max / VARDA.min)) * 1000);
+function rubOf(pos) {
+  const raw = VARDA.min * Math.pow(VARDA.max / VARDA.min, pos / 1000);
+  const step = Math.pow(10, Math.max(Math.floor(Math.log10(raw)) - 1, 0));
+  return clampRub(Math.round(raw / step) * step);
 }
 
-*, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh;
-  margin: 0; background: var(--bg); color: var(--text);
-  font: 400 1rem/1.6 var(--font-body); -webkit-font-smoothing: antialiased;
-}
-a { color: var(--accent); text-decoration: none; }
-a:hover { color: #6cc1ff; }
-button { font-family: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
-.wrap { width: min(var(--wrap), 100% - 2.5rem); margin-inline: auto; }
-.ic { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
-
-/* Header: floating island */
-.island-wrap { position: sticky; top: 0; z-index: 20; padding-top: 12px; }
-.island {
-  position: relative; display: flex; align-items: center; gap: 1rem; height: 64px;
-  padding: 0 0.9rem 0 1.4rem; background: rgba(13, 20, 29, 0.92); backdrop-filter: blur(12px);
-  border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-}
-.logo { font: 700 1.1rem var(--font-head); color: var(--text); }
-.logo span { color: var(--accent); }
-.online {
-  display: flex; align-items: center; gap: 0.7rem; padding: 0.35rem 1rem 0.35rem 0.8rem;
-  background: var(--panel-2); border: 1px solid var(--line); border-radius: 14px; line-height: 1.2;
-}
-.online::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }
-.online b { display: block; font-size: 0.9rem; }
-.online small { color: var(--muted); font-size: 0.75rem; }
-.nav { flex: 1; display: flex; justify-content: center; gap: 0.2rem; }
-.nav a { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0.8rem 0.4rem 0.4rem; border-radius: 10px; color: var(--muted); font-weight: 500; }
-.nav a:hover, .nav a[aria-current="page"] { color: var(--text); background: var(--panel-2); }
-.nav .ico { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--panel-2); }
-.island-actions { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
-.icon-btn {
-  position: relative; display: grid; place-items: center; width: 44px; height: 44px; cursor: pointer;
-  background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; color: var(--muted);
-}
-.icon-btn:hover { color: var(--text); border-color: var(--accent); }
-.icon-btn .ic { width: 1.25rem; height: 1.25rem; }
-.badge {
-  position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 5px;
-  display: none; place-items: center; background: var(--accent); color: #04121f;
-  border-radius: 10px; font: 600 0.75rem/1 var(--font-body);
-}
-.badge.on { display: grid; }
-.nav-toggle { display: none; }
-
-/* Buttons */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
-  padding: 0.85rem 1.5rem; border-radius: 12px; font: 600 1rem var(--font-body);
-  border: 1px solid transparent; cursor: pointer; transition: background 0.15s, box-shadow 0.15s, border-color 0.15s;
-}
-.btn-primary { background: var(--accent); color: #04121f; }
-.btn-primary:hover { background: #4db4ff; color: #04121f; box-shadow: 0 0 24px var(--glow); }
-.btn-dark { background: var(--panel); border-color: var(--line); color: var(--text); }
-.btn-dark:hover { border-color: var(--accent); box-shadow: 0 0 24px var(--glow); }
-
-/* Hero */
-.hero { padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(3rem, 7vw, 5rem); }
-.hero .wrap { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2rem; align-items: center; }
-.hero h1 { font: 700 clamp(2rem, 4.6vw, 3.5rem)/1.12 var(--font-head); margin: 0 0 1.2rem; letter-spacing: -0.02em; }
-.hero p { max-width: 32rem; color: var(--muted); font-size: 1.1rem; margin: 0 0 2rem; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; }
-.hero-art { position: relative; min-height: 420px; }
-
-/* Sonar behind the character */
-.sonar { position: absolute; left: 50%; top: 50%; width: min(440px, 100%); aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; }
-.sonar span { position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--accent); opacity: 0; animation: ping 6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite; }
-.sonar span:nth-child(2) { animation-delay: 2s; }
-.sonar span:nth-child(3) { animation-delay: 4s; }
-.sonar::after { content: ""; position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 40px 10px var(--glow); }
-@keyframes ping { 0% { transform: scale(0.05); opacity: 0.7; } 100% { transform: scale(1); opacity: 0; } }
-
-/* Shop */
-.shop { padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(3rem, 7vw, 5rem); border-top: 1px solid var(--line); }
-.shop h2 { font: 700 clamp(1.5rem, 3vw, 2rem)/1.2 var(--font-head); margin: 0 0 1.6rem; }
-.cat-label { margin: 0 0 0.6rem; color: var(--muted); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
-.cats { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.6rem; }
-.cat { padding: 0.5rem 1.1rem; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); font: 500 0.95rem var(--font-body); cursor: pointer; }
-.cat[aria-pressed="true"] { background: rgba(34, 160, 254, 0.14); border-color: var(--accent); color: var(--accent); }
-
-.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem; }
-.card { display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s; }
-.card:hover { border-color: var(--accent); box-shadow: 0 0 24px var(--glow); }
-.card-img { display: grid; place-items: center; aspect-ratio: 1; background: radial-gradient(circle at 50% 40%, #11263a, var(--panel-2)); color: #1d3a55; }
-.card-img .ic { width: 3rem; height: 3rem; stroke-width: 1.5; }
-.card-img img { width: 100%; height: 100%; object-fit: cover; }
-.card-body { display: flex; flex-direction: column; flex: 1; gap: 0.3rem; padding: 1rem 1.1rem 1.1rem; }
-.card-cat {
-  align-self: flex-start; padding: 0.12rem 0.55rem; line-height: 1.3; border-radius: 6px;
-  background: rgba(34, 160, 254, 0.15); color: var(--accent);
-  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
-}
-.card-cat[data-cat="varda"] { background: rgba(255, 79, 216, 0.16); color: #ff4fd8; }
-.card-cat[data-cat="priv"] { background: rgba(255, 77, 77, 0.16); color: #ff4d4d; }
-.card-name { color: var(--text); font: 600 1.1rem/1.3 var(--font-body); }
-.card-name:hover { color: var(--text); }
-.card-price { color: var(--accent); font: 600 1.15rem var(--font-body); margin-bottom: 0.8rem; }
-.add { margin-top: auto; width: 100%; padding: 0.7rem; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); font: 600 0.95rem var(--font-body); cursor: pointer; transition: background 0.15s, border-color 0.15s; }
-.add:hover { border-color: var(--accent); }
-.add.done { background: rgba(34, 160, 254, 0.14); border-color: var(--accent); color: var(--accent); }
-
-/* Footer */
-.site-footer { border-top: 1px solid var(--line); padding: 3rem 0 2rem; background: var(--panel); }
-.foot { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 2rem; }
-.foot h3 { margin: 0 0 0.9rem; font: 600 0.95rem var(--font-body); color: var(--text); }
-.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
-.foot a { color: var(--muted); }
-.foot a:hover { color: var(--accent); }
-.foot-brand .logo { display: inline-block; margin-bottom: 0.8rem; }
-.foot-brand p { margin: 0 0 0.5rem; color: var(--muted); font-size: 0.9rem; max-width: 26rem; }
-
-/* Responsive */
-@media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 900px) {
-  .nav { display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0; flex-direction: column; padding: 0.6rem; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; }
-  .nav.open { display: flex; }
-  .nav-toggle { display: grid; }
-  .hero .wrap { grid-template-columns: 1fr; }
-  .hero-art { min-height: 300px; order: -1; }
-  .foot { grid-template-columns: 1fr 1fr; }
-  .foot-brand { grid-column: 1 / -1; }
-}
-@media (max-width: 720px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) { .online { display: none; } }
-@media (max-width: 540px) { .grid { grid-template-columns: 1fr; } .card-img { aspect-ratio: 16 / 10; } }
-@media (max-width: 420px) { .foot { grid-template-columns: 1fr; } }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .sonar span { animation: none; opacity: 0.18; }
-  .sonar span:nth-child(1) { transform: scale(0.35); }
-  .sonar span:nth-child(2) { transform: scale(0.65); }
-  .sonar span:nth-child(3) { transform: scale(0.95); }
+// Строка корзины: товар, цена и подпись (используется в корзине в layout.js)
+function lineOf(e) {
+  const p = PRODUCTS.find((x) => x.id === e.id);
+  if (!p) return null;
+  const t = typeOf(p);
+  if (t === "priv") return TERMS[e.term] ? { p, price: p.prices[e.term], label: TERMS[e.term].full } : null;
+  if (t === "item") return { p, price: p.price, label: "Разовая услуга" };
+  if (e.rub == null) return null;
+  const rub = clampRub(e.rub);
+  const d = discountFor(rub);
+  return { p, price: payFor(rub), label: vardsText(vardsFor(rub)) + (d ? ` · скидка ${d}%` : "") };
 }
 
-/* Inner pages */
-.page-head { padding: clamp(2.5rem, 6vw, 4rem) 0 clamp(1.5rem, 4vw, 2.5rem); }
-.page-head h1 { font: 700 clamp(1.8rem, 4vw, 2.8rem)/1.15 var(--font-head); margin: 0 0 1rem; letter-spacing: -0.02em; }
-.page-head p { max-width: 42rem; margin: 0; color: var(--muted); font-size: 1.1rem; }
-.section { padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(3rem, 7vw, 5rem); }
-.sec-title { font: 700 clamp(1.4rem, 3vw, 1.9rem)/1.2 var(--font-head); margin: 0 0 1.4rem; }
-
-/* Media tiers */
-.tiers { display: grid; grid-template-columns: 1fr; gap: 1.2rem; padding-bottom: clamp(2rem, 5vw, 3rem); }
-.tier {
-  position: relative; overflow: hidden; display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 1.5rem 2.5rem;
-  padding: clamp(1.4rem, 3vw, 2rem) clamp(1.4rem, 3vw, 2rem) clamp(1.4rem, 3vw, 2rem) clamp(1.8rem, 3.5vw, 2.6rem);
-  background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+// ---- Каталог: карточки и категории ----
+const grid = document.getElementById("products");
+const searchBox = document.getElementById("search");
+const searchInput = document.getElementById("search-input");
+const searchBtn = document.getElementById("search-btn");
+let activeCat = "all";
+let vdRub = 100;
+function cardPrice(p) {
+  const t = typeOf(p);
+  if (t === "item") return money(p.price);
+  if (t === "currency") return "от " + money(VARDA.min);
+  return "от " + money(Math.min(...p.prices));
 }
-.tier::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--bar); }
-.tier-creator { --bar: linear-gradient(180deg, #ffffff, #9db2c8); }
-.tier-creator .tier-tag { color: #ffffff; }
-.tier-media { --bar: linear-gradient(180deg, #6cc1ff, #1678c9); border-color: var(--accent); box-shadow: 0 0 40px var(--glow); }
-.tier-tag { color: var(--accent); font-size: 0.85rem; font-weight: 600; }
-.tier h2 { font: 700 clamp(1.6rem, 3vw, 2.1rem)/1.1 var(--font-head); margin: 0.5rem 0 0.4rem; }
-.tier-desc { margin: 0; color: var(--muted); }
-.tier-col h3 { margin: 0 0 0.8rem; font: 600 1rem var(--font-body); }
-.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
-.list li { position: relative; padding-left: 1.3rem; }
-.list li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 7px; height: 7px; border-radius: 2px; background: var(--accent); }
-.list li.or { padding-left: 1.3rem; color: var(--muted); font-size: 0.9rem; }
-.list li.or::before { display: none; }
-
-/* Prohibitions: red on dark */
-.ban-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-.ban { display: flex; align-items: center; gap: 1rem; padding: 1.2rem 1.4rem; background: #150b0f; border: 1px solid rgba(255, 77, 94, 0.4); border-radius: 14px; }
-.ban p { margin: 0; }
-.ban-ic { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 77, 94, 0.14); color: #ff4d5e; }
-.ban-center { justify-content: center; text-align: center; margin-top: 1rem; font-weight: 600; color: #ff7a87; }
-
-.cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); }
-.cta p { margin: 0; font-size: 1.1rem; }
-
-@media (max-width: 1000px) { .tier { grid-template-columns: 1fr 1fr; } .tier-head { grid-column: 1 / -1; } }
-@media (max-width: 800px) { .ban-grid { grid-template-columns: 1fr; } }
-@media (max-width: 560px) { .tier { grid-template-columns: 1fr; gap: 1.2rem; } }
-
-/* Contacts */
-.contacts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding-bottom: clamp(3rem, 7vw, 5rem); }
-.contact { display: flex; align-items: center; gap: 1rem; padding: 1.3rem; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; color: var(--text); transition: border-color 0.15s, box-shadow 0.15s; }
-.contact:hover { color: var(--text); border-color: var(--accent); box-shadow: 0 0 24px var(--glow); }
-.contact b { display: block; font: 600 1.1rem var(--font-body); }
-.contact small { color: var(--muted); font-size: 0.9rem; }
-.contact-ic { display: grid; place-items: center; flex: none; width: 52px; height: 52px; border-radius: 14px; background: var(--panel-2); color: var(--accent); }
-.contact-ic .ic { width: 1.5rem; height: 1.5rem; }
-.contact-main { grid-column: 1 / -1; border-color: var(--accent); box-shadow: 0 0 40px var(--glow); padding: 1.6rem; }
-.contact-main b { font-size: 1.3rem; }
-@media (max-width: 800px) { .contacts-grid { grid-template-columns: 1fr; } }
-
-/* Cart drawer */
-.cart:focus, .pm:focus { outline: none; }
-.lock { overflow: hidden; }
-.cart-overlay {
-  position: fixed; inset: 0; z-index: 90; background: rgba(4, 8, 12, 0.55);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0s 0.3s;
+// Категория «Варды»: вместо карточек одна панель с ползунком
+function vardaPanel() {
+  return `
+    <section class="vd-panel">
+      <div class="vd-disc">
+        <div class="vd-disc-head">
+          <p class="vd-box-title">Скидка за объём</p>
+          <span class="vd-disc-hint">Чем больше сумма, тем больше скидка</span>
+        </div>
+        <div class="vd-tiers" id="vd-tiers"></div>
+      </div>
+      <div class="vd-buy">
+        <div class="vd-form">
+          <div class="vd-head">
+            <span class="vd-coin">${ICONS.coin}</span>
+            <div>
+              <h2>Варды</h2>
+              <p class="vd-lead">1 ₽ = ${vardsText(VARDA.perRub)}. Сумма от ${fmtNum(VARDA.min)} до ${fmtNum(VARDA.max)} ₽.</p>
+            </div>
+          </div>
+          <label class="vd-field"><span>Сумма</span><input id="vd-num" type="number" inputmode="numeric" min="${VARDA.min}" max="${VARDA.max}" step="1"><b>₽</b></label>
+          <div>
+            <input id="vd-range" class="vd-range" type="range" min="0" max="1000" step="1" aria-label="Сумма в рублях">
+            <div class="vd-scale"><span>${fmtNum(VARDA.min)} ₽</span><span>${fmtNum(VARDA.max)} ₽</span></div>
+          </div>
+          <div class="vd-presets">${VARDA.presets.map((n) => `<button type="button" data-rub="${n}" aria-pressed="false">${fmtNum(n)} ₽</button>`).join("")}</div>
+        </div>
+        <div class="vd-sum">
+          <div class="vd-row"><span>Вы получите</span><p class="vd-get" id="vd-get"></p></div>
+          <div class="vd-row"><span>К оплате</span><b class="vd-price" id="vd-price"></b><p class="vd-sale" id="vd-sale"></p></div>
+          <button class="btn btn-primary" id="vd-add" type="button">В корзину</button>
+        </div>
+      </div>
+    </section>`;
 }
-.cart-overlay.open { opacity: 1; visibility: visible; transition: opacity 0.3s; }
-.cart {
-  position: fixed; top: 0; right: 0; z-index: 100; display: flex; flex-direction: column;
-  width: min(480px, 100%); height: 100%; background: var(--bg); border-left: 1px solid var(--line);
-  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
-  transform: translateX(100%); visibility: hidden;
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s 0.35s;
+function paintVarda() {
+  const num = document.getElementById("vd-num");
+  if (!num) return;
+  const range = document.getElementById("vd-range");
+  if (document.activeElement !== num) num.value = vdRub;
+  range.value = posOf(vdRub);
+  range.style.setProperty("--p", range.value / 10 + "%");
+  document.querySelectorAll(".vd-presets button").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.rub) === vdRub)));
+  const d = discountFor(vdRub);
+  document.getElementById("vd-get").textContent = vardsText(vardsFor(vdRub));
+  document.getElementById("vd-price").textContent = money(payFor(vdRub));
+  document.getElementById("vd-sale").textContent = d ? `Скидка за объём: ${d}%` : "";
+  const check = '<svg class="ic" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>';
+  document.getElementById("vd-tiers").innerHTML = VARDA.tiers.map(([from, pct]) => vdRub >= from
+    ? `<div class="vd-tier on"><span class="vd-pct">−${pct}%</span><span class="vd-from">от ${fmtNum(from)} ₽</span>${check}</div>`
+    : `<div class="vd-tier"><span class="vd-pct">−${pct}%</span><span class="vd-from">от ${fmtNum(from)} ₽</span><span class="vd-need">+${fmtNum(from - vdRub)}</span></div>`).join("");
+  const entry = getCart().find((x) => x.id === "varda");
+  document.getElementById("vd-add").textContent = !entry ? "В корзину" : entry.rub === vdRub ? "Открыть корзину" : "Изменить сумму";
 }
-.cart.open { transform: none; visibility: visible; transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.cart-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.4rem 1.5rem 1.2rem; }
-.cart-head h2 { margin: 0; font: 700 1.5rem/1.2 var(--font-head); }
-.cart-head p { margin: 0.3rem 0 0; color: var(--muted); font-size: 0.95rem; }
-.cart-body { flex: 1; overflow-y: auto; padding: 0 1.5rem 1.5rem; }
-.cart-content { display: grid; gap: 1rem; }
-.cart.is-empty .cart-content, .cart.is-empty .cart-foot { display: none; }
-.cart:not(.is-empty) .cart-empty { display: none; }
-.cart-empty { display: grid; justify-items: start; gap: 1.2rem; padding: 2rem 0; }
-.cart-empty p { margin: 0; color: var(--muted); font-size: 1.05rem; }
-
-.cart-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.8rem; }
-.cart-item { display: flex; align-items: center; gap: 1rem; padding: 0.9rem; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; }
-.cart-thumb { display: grid; place-items: center; flex: none; width: 56px; height: 56px; border-radius: 12px; background: radial-gradient(circle at 50% 40%, #11263a, var(--panel-2)); color: #2a5a85; }
-.cart-thumb .ic { width: 1.6rem; height: 1.6rem; }
-.cart-info { flex: 1; min-width: 0; }
-.cart-info b { display: block; font-weight: 600; }
-.cart-info small { color: var(--accent); font-size: 0.8rem; font-weight: 600; }
-.cart-price { color: var(--accent); font-weight: 600; white-space: nowrap; }
-.icon-btn.small { width: 36px; height: 36px; border-radius: 10px; }
-.icon-btn.small .ic { width: 1.05rem; height: 1.05rem; }
-
-.cart-box { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 1.1rem; }
-.cart-box h3 { margin: 0 0 0.8rem; font: 600 0.95rem var(--font-body); }
-.fields { display: grid; gap: 0.6rem; }
-.field { display: flex; align-items: center; gap: 1rem; padding: 0 1rem; background: var(--panel-2); border: 1px solid transparent; border-radius: 10px; }
-.field[hidden] { display: none; }
-.field:focus-within { border-color: var(--accent); }
-.field span { flex: none; width: 5.4rem; color: var(--muted); font-size: 0.85rem; }
-.field input { flex: 1; min-width: 0; padding: 0.85rem 0; background: none; border: 0; outline: 0; color: var(--text); font: 500 1rem var(--font-body); }
-.field input::placeholder { color: #4d5d70; }
-
-.cart-gift { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.1rem; }
-.gift-label { display: flex; align-items: center; gap: 0.7rem; font-weight: 600; }
-.switch { position: relative; flex: none; width: 46px; height: 26px; padding: 0; border-radius: 13px; border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; transition: background 0.2s; }
-.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--muted); transition: transform 0.2s, background 0.2s; }
-.switch[aria-checked="true"] { background: var(--accent); border-color: var(--accent); }
-.switch[aria-checked="true"]::after { transform: translateX(20px); background: #04121f; }
-
-.cart-foot { padding: 1.2rem 1.5rem 1.5rem; background: var(--panel); border-top: 1px solid var(--line); }
-.cart-total { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1rem; color: var(--muted); }
-.cart-total b { color: var(--text); font: 700 2rem/1 var(--font-head); }
-.terms { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; color: var(--muted); font-size: 0.9rem; cursor: pointer; }
-.terms input { width: 18px; height: 18px; accent-color: var(--accent); }
-.pay { width: 100%; padding: 1rem; }
-.btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.btn-primary:disabled:hover { background: var(--accent); box-shadow: none; }
-.cart-hint { min-height: 1.3rem; margin: 0.7rem 0 0; color: var(--muted); font-size: 0.85rem; }
-@media (prefers-reduced-motion: reduce) {
-  .cart, .cart.open, .cart-overlay, .cart-overlay.open { transition: none; }
+function renderGrid() {
+  if (!grid) return;
+  if (activeCat === "varda") {
+    const entry = getCart().find((x) => x.id === "varda");
+    if (entry && entry.rub) vdRub = clampRub(entry.rub);
+    grid.innerHTML = vardaPanel();
+    return paintVarda();
+  }
+  const q = searchQuery();
+  const list = PRODUCTS.filter((p) => (activeCat === "all" || (p.cat || "priv") === activeCat)
+    && (!q || p.name.toLowerCase().includes(q)));
+  if (!list.length && q) {
+    grid.innerHTML = `<p class="search-empty">По запросу «${escapeHtml(q)}» ничего не найдено</p>`;
+    return;
+  }
+  grid.innerHTML = list.map((p) => `
+    <article class="card">
+      <button class="card-img" type="button" data-open="${p.id}" aria-label="${p.name}: выбрать вариант">${ICONS[p.icon || "box"]}</button>
+      <div class="card-body">
+        <span class="card-cat" data-cat="${p.cat || "priv"}">${CARD_CAT[p.cat || "priv"]}</span>
+        <button class="card-name" type="button" data-open="${p.id}">${p.name}</button>
+        <span class="card-price">${cardPrice(p)}</span>
+        <button class="add" type="button" data-open="${p.id}">Выбрать вариант</button>
+      </div>
+    </article>`).join("");
+}
+function setCat(id) {
+  activeCat = id;
+  document.querySelectorAll(".cat[data-cat]").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.cat === id)));
+  // В категории «Варды» поиск не нужен: там одна панель, а не список товаров
+  if (id === "varda") toggleSearch(false);
+  document.querySelectorAll(".search").forEach((x) => x.classList.toggle("is-hidden", id === "varda"));
+  renderGrid();
 }
 
-.cart-hint { white-space: pre-line; }
+// Поиск товара по названию: строка выезжает слева от кнопки
+function searchQuery() { return searchInput ? searchInput.value.trim().toLowerCase() : ""; }
+function escapeHtml(t) { return String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[c]); }
+function toggleSearch(open) {
+  if (!searchBox) return;
+  const now = typeof open === "boolean" ? open : !searchBox.classList.contains("open");
+  searchBox.classList.toggle("open", now);
+  searchBtn.setAttribute("aria-expanded", String(now));
+  searchBtn.setAttribute("aria-label", now ? "Закрыть поиск" : "Открыть поиск");
+  if (now) {
+    setTimeout(() => searchInput.focus({ preventScroll: true }), 150);
+  } else if (searchInput.value) {
+    searchInput.value = "";
+    renderGrid();
+  }
+}
+if (searchBox) {
+  searchBtn.addEventListener("click", () => toggleSearch());
+  searchInput.addEventListener("input", renderGrid);
+  searchInput.addEventListener("keydown", (e) => { if (e.key === "Escape") toggleSearch(false); });
+}
+renderGrid();
+document.querySelectorAll(".cat[data-cat]").forEach((b) => b.addEventListener("click", () => setCat(b.dataset.cat)));
+paintCart();
 
-main { flex: 1 0 auto; }
-
-/* Autofill: no white highlight */
-.field input:-webkit-autofill,
-.field input:-webkit-autofill:hover,
-.field input:-webkit-autofill:focus {
-  -webkit-text-fill-color: var(--text);
-  caret-color: var(--text);
-  -webkit-box-shadow: 0 0 0 1000px var(--panel-2) inset;
-  box-shadow: 0 0 0 1000px var(--panel-2) inset;
-  transition: background-color 9999s ease-out 0s;
+// Возможности привилегии: commands = [["описание", "/команда"]], perks = [["название", "значение"]]
+const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+function featHtml(p) {
+  const about = (p.about || []).map((t) => `<p class="pm-about">${esc(t)}</p>`).join("");
+  const warn = p.warn ? `<p class="pm-warn">${esc(p.warn)}</p>` : "";
+  const f = p.features;
+  if (!f) return about + warn;
+  const block = (title, rows) => rows && rows.length ? `<section><h3>${title}</h3><ul class="feat-list">${rows.join("")}</ul></section>` : "";
+  return about + warn
+       + block("Команды", (f.commands || []).map(([t, c]) => `<li>${esc(t)} — <code>${esc(c)}</code></li>`))
+       + block("Возможности", (f.perks || []).map(([l, v]) => `<li>${esc(l)}${v ? `: <b>${esc(v)}</b>` : ""}</li>`));
 }
 
-/* Cards: buttons that look like text/image */
-button.card-img { width: 100%; padding: 0; border: 0; cursor: pointer; }
-button.card-name { padding: 0; border: 0; background: none; text-align: left; cursor: pointer; }
-button.card-name:hover { color: var(--accent); }
-
-/* Product window */
-.pm {
-  position: fixed; z-index: 100; left: 50%; top: 50%; width: min(840px, calc(100% - 2rem)); max-height: calc(100% - 2rem);
-  overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; background: var(--bg);
-  border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-  opacity: 0; visibility: hidden; transform: translate(-50%, -46%) scale(0.98);
-  transition: opacity 0.25s, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s 0.3s;
+// ---- Окно товара (привилегии со сроком и разовые услуги) ----
+let pm = null;
+function buildPm() {
+  document.body.insertAdjacentHTML("beforeend", `
+    <div class="cart-overlay" id="pm-overlay" data-pm-close></div>
+    <div class="pm" id="pm" role="dialog" aria-modal="true" aria-labelledby="pm-name" tabindex="-1">
+      <button class="icon-btn pm-x" type="button" data-pm-close aria-label="Закрыть">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="pm-img" id="pm-img"></div>
+      <div class="pm-info">
+        <span class="card-cat" id="pm-cat"></span>
+        <h2 id="pm-name"></h2>
+        <div class="pm-feat" id="pm-feat"></div>
+        <div class="pm-terms" id="pm-terms" role="group" aria-label="Срок привилегии"></div>
+        <div class="pm-buy">
+          <span class="pm-price" id="pm-price"></span>
+          <button class="btn btn-primary" id="pm-add" type="button">В корзину</button>
+        </div>
+      </div>
+    </div>`);
+  const g = (id) => document.getElementById(id);
+  pm = { overlay: g("pm-overlay"), el: g("pm"), img: g("pm-img"), cat: g("pm-cat"), name: g("pm-name"), feat: g("pm-feat"),
+         terms: g("pm-terms"), price: g("pm-price"), add: g("pm-add"), id: null, type: "priv", term: 0, next: null, last: null };
 }
-.pm.open { opacity: 1; visibility: visible; transform: translate(-50%, -50%); transition: opacity 0.25s, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.pm-x { position: absolute; top: 1rem; right: 1rem; z-index: 1; }
-.pm-img { display: grid; place-items: center; min-height: 360px; border-radius: 22px 0 0 22px; background: radial-gradient(circle at 50% 40%, #11263a, var(--panel-2)); color: #2a5a85; }
-.pm-img .ic { width: 6rem; height: 6rem; stroke-width: 1.2; }
-.pm-info { display: flex; flex-direction: column; gap: 0.9rem; padding: 2rem 1.8rem; }
-.pm-info h2 { margin: 0; padding-right: 3rem; font: 700 1.9rem/1.15 var(--font-head); }
-.pm-terms { display: grid; gap: 0.5rem; }
-.pm-term { display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 1rem; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; color: var(--text); font: 500 1rem var(--font-body); cursor: pointer; transition: border-color 0.15s, background 0.15s; }
-.pm-term b { color: var(--accent); font-weight: 600; }
-.pm-term:hover { border-color: var(--accent); }
-.pm-term[aria-pressed="true"] { border-color: var(--accent); background: rgba(34, 160, 254, 0.12); }
-.pm-buy { display: grid; gap: 0.8rem; margin-top: auto; padding-top: 0.6rem; }
-.pm-price { font: 700 2rem/1 var(--font-head); }
-@media (max-width: 700px) {
-  .pm { grid-template-columns: 1fr; }
-  .pm-img { min-height: 170px; border-radius: 22px 22px 0 0; }
-  .pm-img .ic { width: 4rem; height: 4rem; }
-  .pm-info { padding: 1.4rem; }
-  .pm-info h2 { padding-right: 0; }
+function paintPm() {
+  const p = PRODUCTS.find((x) => x.id === pm.id);
+  const entry = getCart().find((x) => x.id === pm.id);
+  let price, next;
+  if (pm.type === "priv") {
+    pm.terms.innerHTML = TERMS.map((t, i) =>
+      `<button class="pm-term" type="button" data-term="${i}" aria-pressed="${i === pm.term}"><span>${t.full}</span><b>${money(p.prices[i])}</b></button>`).join("");
+    price = p.prices[pm.term];
+    next = { id: pm.id, term: pm.term };
+  } else {
+    pm.terms.innerHTML = "";
+    price = p.price;
+    next = { id: pm.id };
+  }
+  pm.next = next;
+  pm.price.textContent = money(price);
+  const same = entry && JSON.stringify(entry) === JSON.stringify(next);
+  pm.add.textContent = !entry ? "В корзину" : same ? "Открыть корзину" : "Изменить срок";
 }
-@media (prefers-reduced-motion: reduce) { .pm, .pm.open { transition: none; } }
-
-/* Rules */
-.rules-layout { padding-bottom: clamp(3rem, 7vw, 5rem); }
-.rules-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.4rem; }
-.rules-nav a {
-  padding: 0.6rem 1.1rem; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
-  color: var(--muted); font: 500 0.95rem var(--font-body); white-space: nowrap;
-  transition: color 0.15s, border-color 0.15s, box-shadow 0.15s;
+function openProduct(id) {
+  const p = PRODUCTS.find((x) => x.id === id);
+  if (!p) return;
+  if (!pm) buildPm();
+  const entry = getCart().find((x) => x.id === id);
+  pm.id = id;
+  pm.type = typeOf(p);
+  pm.term = entry && entry.term != null ? entry.term : 0;
+  pm.name.textContent = p.name;
+  pm.cat.textContent = CARD_CAT[p.cat || "priv"];
+  pm.cat.dataset.cat = p.cat || "priv";
+  pm.img.innerHTML = ICONS[p.icon || "box"];
+  pm.feat.innerHTML = featHtml(p);
+  pm.last = document.activeElement;
+  paintPm();
+  pm.overlay.classList.add("open");
+  pm.el.classList.add("open");
+  document.body.classList.add("lock");
+  pm.el.focus();
 }
-.rules-nav a:hover { color: var(--text); border-color: var(--accent); box-shadow: 0 0 18px var(--glow); }
-.rules-body { display: grid; gap: 1.2rem; }
-.rules-sec { scroll-margin-top: 100px; padding: clamp(1.2rem, 3vw, 1.8rem); background: var(--panel); border: 1px solid var(--line); border-radius: 18px; }
-.rules-sec h2 { margin: 0 0 0.8rem; font: 700 clamp(1.1rem, 2.4vw, 1.4rem)/1.25 var(--font-head); }
-.rules { list-style: none; margin: 0; padding: 0; }
-.rules li { display: grid; grid-template-columns: 3.6rem 1fr; gap: 0.3rem 1.2rem; padding: 0.7rem 0.6rem; border-top: 1px solid var(--line); border-radius: 10px; scroll-margin-top: 100px; }
-.rules li:first-child { border-top: 0; }
-.rules li.sub { padding: 0.25rem 0.6rem 0.25rem 3rem; border-top: 0; }
-.rules li:target { background: rgba(34, 160, 254, 0.1); }
-.rn { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
-.rules li.sub .rn { color: var(--muted); }
-.rn:hover { color: #6cc1ff; }
-.rule-note { grid-column: 2; margin: 0.3rem 0 0; padding: 0.7rem 1rem; background: rgba(34, 160, 254, 0.08); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; color: var(--muted); font-size: 0.95rem; }
-@media (max-width: 700px) {
-  .rules-nav { flex-wrap: nowrap; overflow-x: auto; }
-}
-@media (max-width: 480px) {
-  .rules li { grid-template-columns: 2.8rem 1fr; gap: 0.3rem 0.8rem; }
-  .rules li.sub { padding-left: 1.4rem; }
-}
-
-.cta-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; }
-
-/* Privilege features in the product window */
-.pm-feat { display: grid; gap: 0.9rem; }
-.pm-feat h3 { margin: 0 0 0.4rem; color: var(--muted); font: 600 0.9rem var(--font-body); }
-.feat-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; font-size: 0.95rem; }
-.feat-list li { position: relative; padding-left: 1.1rem; }
-.feat-list li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 6px; height: 6px; border-radius: 2px; background: var(--accent); }
-.feat-list b { color: var(--accent); font-weight: 600; }
-.feat-list code { padding: 0.1rem 0.4rem; background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; color: var(--accent); font: 500 0.85em ui-monospace, Consolas, monospace; }
-
-/* Catalog page */
-.catalog { display: grid; grid-template-columns: 220px 1fr; gap: 2rem; align-items: start; padding-bottom: clamp(3rem, 7vw, 5rem); }
-.catalog-side { position: sticky; top: 100px; }
-.catalog-side .cat-label { margin-bottom: 0.8rem; }
-.cats-col { flex-direction: column; margin-bottom: 0; }
-.cats-col .cat { width: 100%; text-align: left; }
-@media (max-width: 1150px) { .catalog .grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 900px) {
-  .catalog { grid-template-columns: 1fr; gap: 1rem; }
-  .catalog-side { position: static; }
-  .cats-col { flex-direction: row; }
-  .cats-col .cat { width: auto; }
-}
-@media (max-width: 720px) { .catalog .grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 540px) { .catalog .grid { grid-template-columns: 1fr; } }
-
-/* Payment page */
-.narrow { width: min(960px, 100% - 2.5rem); }
-.pay-page { padding-bottom: clamp(3rem, 7vw, 5rem); }
-.pay-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.8rem; margin: 0 0 1.1rem; font: 700 clamp(1.25rem, 3vw, 1.6rem)/1.25 var(--font-head); }
-.pay-title small { color: var(--muted); font: 500 0.9rem var(--font-body); }
-.pay-card { display: grid; grid-template-columns: 1fr 290px; margin-bottom: 2.5rem; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; }
-.pay-main { padding: clamp(1.3rem, 3vw, 2rem); }
-.pay-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-.pay-logo { display: grid; place-items: center; flex: none; width: 52px; height: 52px; border-radius: 14px; background: rgba(34, 160, 254, 0.14); color: var(--accent); }
-.pay-logo .ic { width: 1.5rem; height: 1.5rem; }
-.pay-head h3 { margin: 0; font: 600 1.2rem var(--font-body); }
-.pay-head p { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.9rem; }
-.pay-steps { list-style: none; margin: 0 0 1.6rem; padding: 0; display: grid; gap: 1rem; }
-.pay-steps li { display: flex; gap: 1rem; }
-.pay-steps p, .send-card p { margin: 0; color: var(--muted); }
-.pay-steps b, .send-card b { color: var(--text); font-weight: 600; }
-.pay-num { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 8px; background: rgba(34, 160, 254, 0.16); color: var(--accent); font-weight: 600; font-size: 0.9rem; }
-.pay-qr { display: grid; align-content: center; justify-items: center; gap: 1rem; padding: 1.8rem; text-align: center; background: linear-gradient(160deg, #0f2236, #0b141f); border-left: 1px solid var(--line); }
-.pay-qr b { color: var(--accent); font-size: 0.85rem; font-weight: 600; }
-.pay-qr img { width: 180px; height: 180px; padding: 10px; background: #fff; border-radius: 16px; image-rendering: pixelated; }
-.pay-qr p { margin: 0; color: var(--muted); font-size: 0.85rem; }
-.send-card { list-style: none; margin: 0; padding: 1.4rem; display: grid; gap: 1rem; background: rgba(34, 160, 254, 0.06); border: 1px solid rgba(34, 160, 254, 0.25); border-radius: 18px; }
-.send-card li { display: flex; align-items: center; gap: 1rem; }
-.send-ic { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 10px; background: rgba(34, 160, 254, 0.14); color: var(--accent); }
-@media (max-width: 800px) {
-  .pay-card { grid-template-columns: 1fr; }
-  .pay-qr { border-left: 0; border-top: 1px solid var(--line); }
+function closeProduct() {
+  if (!pm) return;
+  pm.overlay.classList.remove("open");
+  pm.el.classList.remove("open");
+  document.body.classList.remove("lock");
+  if (pm.last && pm.last.focus) pm.last.focus();
 }
 
-/* "Как оплатить" block under the privileges */
-.catalog-main { min-width: 0; }
-.pay-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.2rem; margin-top: 2rem; padding: 1.5rem 1.6rem; background: rgba(34, 160, 254, 0.06); border: 1px solid rgba(34, 160, 254, 0.25); border-radius: 18px; }
-.pay-cta h2 { margin: 0 0 0.3rem; font: 700 1.2rem var(--font-head); }
-.pay-cta p { margin: 0; max-width: 34rem; color: var(--muted); }
+document.addEventListener("click", (e) => {
+  const open = e.target.closest("[data-open]");
+  if (open) {
+    e.preventDefault();
+    const p = PRODUCTS.find((x) => x.id === open.dataset.open);
+    // Варды открываются не в окне, а в своей категории с ползунком
+    if (p && typeOf(p) === "currency" && grid) { setCat("varda"); return grid.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+    return openProduct(open.dataset.open);
+  }
+  const rubBtn = e.target.closest("[data-rub]");
+  if (rubBtn) { vdRub = clampRub(rubBtn.dataset.rub); document.getElementById("vd-num").value = vdRub; return paintVarda(); }
+  if (e.target.closest("#vd-add")) {
+    const next = { id: "varda", rub: vdRub };
+    const entry = getCart().find((x) => x.id === "varda");
+    if (!entry || JSON.stringify(entry) !== JSON.stringify(next)) {
+      setCart(getCart().filter((x) => x.id !== "varda").concat(next));
+      paintCart();
+      paintVarda();
+    }
+    return document.dispatchEvent(new Event("cart:open"));
+  }
+  if (!pm) return;
+  if (e.target.closest("[data-pm-close]")) return closeProduct();
+  const term = e.target.closest(".pm-term");
+  if (term) { pm.term = Number(term.dataset.term); return paintPm(); }
+  if (e.target.closest("#pm-add")) {
+    const entry = getCart().find((x) => x.id === pm.id);
+    if (!entry || JSON.stringify(entry) !== JSON.stringify(pm.next)) {
+      const cart = getCart().filter((x) => x.id !== pm.id);
+      cart.push(pm.next);
+      setCart(cart);
+      paintCart();
+    }
+    closeProduct();
+    document.dispatchEvent(new Event("cart:open"));
+  }
+});
+document.addEventListener("input", (e) => {
+  if (e.target.id === "vd-num") { vdRub = clampRub(e.target.value); paintVarda(); }
+  else if (e.target.id === "vd-range") { vdRub = rubOf(Number(e.target.value)); document.getElementById("vd-num").value = vdRub; paintVarda(); }
+});
+document.addEventListener("change", (e) => {
+  if (e.target.id === "vd-num") e.target.value = vdRub;
+});
+document.addEventListener("keydown", (e) => {
+  if (!pm || !pm.el.classList.contains("open")) return;
+  if (e.key === "Escape") return closeProduct();
+  if (e.key !== "Tab") return;
+  const f = [...pm.el.querySelectorAll("button:not(:disabled)")];
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && (document.activeElement === first || document.activeElement === pm.el)) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
 
-/* Legal documents */
-.doc { width: min(860px, 100% - 2.5rem); margin-inline: auto; padding-bottom: clamp(3rem, 7vw, 5rem); }
-.doc-draft { margin: 0 0 1.4rem; padding: 1rem 1.2rem; background: rgba(255, 196, 64, 0.08); border: 1px solid rgba(255, 196, 64, 0.45); border-radius: 14px; color: #ffd37a; font-size: 0.95rem; }
-.doc-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
-.doc-nav a { padding: 0.5rem 0.9rem; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; color: var(--muted); font: 500 0.9rem var(--font-body); transition: color 0.15s, border-color 0.15s; }
-.doc-nav a:hover { color: var(--text); border-color: var(--accent); }
-.doc-sec { scroll-margin-top: 100px; margin-bottom: 2.2rem; }
-.doc-sec h2 { margin: 0 0 0.9rem; font: 700 clamp(1.1rem, 2.4vw, 1.35rem)/1.3 var(--font-head); }
-.cl { display: grid; grid-template-columns: 3.4rem 1fr; gap: 0 1rem; padding: 0.35rem 0; }
-.cl-n { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
-.cl a { word-break: break-word; }
-.fill { padding: 0.05rem 0.4rem; background: rgba(255, 196, 64, 0.16); color: #ffd37a; border-radius: 6px; }
-@media (max-width: 480px) { .cl { grid-template-columns: 2.8rem 1fr; gap: 0 0.7rem; } }
+// Копирование IP
+document.querySelectorAll("[data-copy]").forEach((btn) => {
+  const t = btn.querySelector(".t");
+  const original = t.textContent;
+  btn.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(btn.dataset.copy); t.textContent = "Скопировано"; }
+    catch (e) { t.textContent = "Скопируй вручную"; }
+    setTimeout(() => (t.textContent = original), 1800);
+  });
+});
 
-.pm-terms:empty { display: none; }
-.pm-note { margin: 0; color: var(--muted); font-size: 0.9rem; }
-.pm-note:empty { display: none; }
-
-
-/* 404 */
-.nf { display: grid; justify-items: center; align-content: center; gap: 0.9rem; min-height: 60vh; padding: 3rem 1.25rem; text-align: center; }
-.nf-code { color: var(--accent); font: 700 clamp(5rem, 18vw, 9rem)/1 var(--font-head); text-shadow: 0 0 60px var(--glow); }
-.nf h1 { margin: 0; font: 700 clamp(1.4rem, 3.5vw, 2rem)/1.2 var(--font-head); }
-.nf p { margin: 0; color: var(--muted); font-size: 1.05rem; }
-.nf-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; margin-top: 0.8rem; }
-.btn-outline { background: transparent; border-color: var(--accent); color: var(--text); }
-.btn-outline:hover { background: rgba(34, 160, 254, 0.1); box-shadow: 0 0 24px var(--glow); color: var(--text); }
-
-
-/* Варды: сверху плашка «Скидка за объём», ниже покупка */
-.vd-panel { grid-column: 1 / -1; display: grid; gap: 1.2rem; }
-.vd-disc { padding: clamp(1.1rem, 2.5vw, 1.6rem); background: radial-gradient(circle at 50% 0%, #11263a, var(--panel-2)); border: 1px solid var(--line); border-radius: 22px; }
-.vd-disc-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.3rem 1rem; margin-bottom: 1rem; }
-.vd-box-title { margin: 0; color: var(--text); font: 700 1.05rem var(--font-head); }
-.vd-disc-hint { color: var(--muted); font-size: 0.85rem; }
-.vd-tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.7rem; }
-.vd-tier { display: grid; justify-items: center; align-content: center; gap: 0.45rem; padding: 0.9rem 0.5rem; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; text-align: center; }
-.vd-tier.on { background: rgba(34, 160, 254, 0.12); border-color: rgba(34, 160, 254, 0.65); }
-.vd-pct { padding: 0.2rem 0.65rem; background: rgba(34, 160, 254, 0.16); border-radius: 9px; color: var(--accent); font-weight: 700; font-size: 1rem; }
-.vd-from { font-weight: 600; }
-.vd-need { color: var(--muted); font-size: 0.85rem; }
-.vd-tier .ic { color: var(--accent); stroke-width: 2.4; }
-
-.vd-buy { display: grid; grid-template-columns: 1fr 360px; overflow: hidden; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; }
-.vd-form { display: grid; gap: 1.1rem; align-content: center; padding: clamp(1.4rem, 3vw, 2rem); }
-.vd-head { display: flex; align-items: center; gap: 1rem; }
-.vd-coin { display: grid; place-items: center; flex: none; width: 52px; height: 52px; background: rgba(34, 160, 254, 0.14); border-radius: 14px; color: var(--accent); }
-.vd-coin .ic { width: 1.5rem; height: 1.5rem; }
-.vd-head h2 { margin: 0; font: 700 1.5rem var(--font-head); }
-.vd-lead { margin: 0.15rem 0 0; color: var(--muted); font-size: 0.95rem; }
-.vd-field { display: flex; align-items: center; gap: 0.8rem; padding: 0 1rem; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; }
-.vd-field:focus-within { border-color: var(--accent); }
-.vd-field span { color: var(--muted); font-size: 0.85rem; }
-.vd-field b { color: var(--muted); font-weight: 500; }
-.vd-field input { flex: 1; min-width: 0; padding: 0.85rem 0; background: none; border: 0; outline: 0; color: var(--text); font: 600 1.15rem var(--font-body); text-align: right; -moz-appearance: textfield; appearance: textfield; }
-.vd-field input::-webkit-outer-spin-button, .vd-field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.vd-range { --p: 0%; display: block; width: 100%; height: 6px; margin: 0.5rem 0 0; border-radius: 3px; outline: none; cursor: pointer; -webkit-appearance: none; appearance: none; background: linear-gradient(90deg, var(--accent) var(--p), var(--panel-2) var(--p)); }
-.vd-range::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); box-shadow: 0 0 0 1px var(--accent), 0 0 14px var(--glow); }
-.vd-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); box-shadow: 0 0 0 1px var(--accent), 0 0 14px var(--glow); }
-.vd-scale { display: flex; justify-content: space-between; margin-top: 0.5rem; color: var(--muted); font-size: 0.8rem; }
-.vd-presets { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.vd-presets button { padding: 0.45rem 0.9rem; background: var(--panel-2); border: 1px solid var(--line); border-radius: 9px; color: var(--muted); font: 600 0.85rem var(--font-body); cursor: pointer; }
-.vd-presets button:hover { color: var(--text); border-color: var(--accent); }
-.vd-presets button[aria-pressed="true"] { background: rgba(34, 160, 254, 0.12); border-color: var(--accent); color: var(--accent); }
-
-.vd-sum { display: grid; align-content: center; gap: 1.1rem; padding: clamp(1.4rem, 3vw, 2rem); text-align: center; background: radial-gradient(circle at 30% 0%, #11263a, var(--panel-2)); border-left: 1px solid var(--line); }
-.vd-row { display: grid; gap: 0.3rem; }
-.vd-row + .vd-row { padding-top: 1.1rem; border-top: 1px solid var(--line); }
-.vd-row > span { color: var(--muted); font-size: 0.9rem; }
-.vd-get { margin: 0; font: 700 1.5rem/1.2 var(--font-head); }
-.vd-price { font: 700 2.2rem/1.1 var(--font-head); }
-.vd-sale { margin: 0.2rem 0 0; color: var(--accent); font-weight: 600; font-size: 0.9rem; }
-.vd-sale:empty { display: none; }
-.vd-sum .btn { width: 100%; }
-@media (max-width: 800px) {
-  .vd-buy { grid-template-columns: 1fr; }
-  .vd-sum { border-left: 0; border-top: 1px solid var(--line); }
+// Игроков онлайн
+const online = document.querySelector("[data-online]");
+if (online) {
+  fetch("https://api.mcsrvstat.us/3/mc.w-smp.in")
+    .then((r) => r.json())
+    .then((d) => { if (d.online && d.players) online.textContent = d.players.online + "/" + d.players.max; })
+    .catch(() => {});
 }
 
-/* Description and warning in the product window */
-.pm-about { margin: 0; color: var(--muted); }
-.pm-about:first-child { color: var(--text); font-weight: 600; font-size: 1.05rem; }
-.pm-warn { margin: 0; padding: 0.85rem 1rem; background: rgba(255, 77, 94, 0.08); border: 1px solid rgba(255, 77, 94, 0.45); border-radius: 12px; color: #ff7a87; font-weight: 700; font-size: 0.9rem; line-height: 1.4; }
-.cl.sub { padding-left: 2rem; }
-.cl.sub .cl-n { color: var(--muted); }
-
-/* Logo hover: white to blue */
-.logo { transition: color 0.3s ease; }
-.logo:hover { color: var(--accent); }
-
-/* Page transitions: content fades in; on leaving it fades out (header stays in place) */
-@keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
-main, .site-footer { animation: page-in 0.35s ease; }
-body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0.22s ease; }
-@media (prefers-reduced-motion: reduce) {
-  main, .site-footer { animation: none; }
-  .logo { transition: none; }
-}
-
-/* Поиск в ассортименте */
-.shop-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.6rem; }
-.shop-bar .cats { margin-bottom: 0; }
-.search { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
-.search-input {
-  width: 0; min-width: 0; padding: 0; opacity: 0; border: 1px solid transparent; border-radius: 10px;
-  background: var(--panel); color: var(--text); font: 500 0.95rem var(--font-body);
-  transition: width 0.4s ease, opacity 0.3s ease, padding 0.4s ease, border-color 0.3s ease;
-}
-.search-input::placeholder { color: var(--muted); }
-.search.open .search-input { width: min(260px, 60vw); opacity: 1; padding: 0.5rem 0.9rem; border-color: var(--accent); }
-.search-btn {
-  display: grid; place-items: center; width: 2.6rem; height: 2.4rem; padding: 0; flex: 0 0 auto;
-  border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); cursor: pointer;
-  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-}
-.search-btn:hover { color: var(--text); border-color: var(--accent); }
-.search-btn[aria-expanded="true"] { color: var(--accent); border-color: var(--accent); background: rgba(34, 160, 254, 0.14); }
-.search.is-hidden { display: none; }
-.search-empty { grid-column: 1 / -1; margin: 2rem 0; color: var(--muted); text-align: center; }
-@media (prefers-reduced-motion: reduce) {
-  .search-input, .search-btn { transition: none; }
+// Мобильное меню
+const toggle = document.querySelector(".nav-toggle");
+const nav = document.querySelector(".nav");
+if (toggle && nav) {
+  toggle.addEventListener("click", () => {
+    const open = nav.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", String(open));
+  });
 }
