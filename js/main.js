@@ -102,6 +102,13 @@ const ICONS = {
 };
 
 // Категории товаров (порядок кнопок)
+// Подписи бейджей категорий на карточках (CSS делает их заглавными)
+const CARD_CAT = {
+  priv: "Привилегии",
+  varda: "Донат валюта",
+  other: "Прочее",
+};
+
 const CATS = [
   { id: "all", label: "Все" },
   { id: "priv", label: "Привилегии" },
@@ -227,7 +234,7 @@ function renderGrid() {
     <article class="card">
       <button class="card-img" type="button" data-open="${p.id}" aria-label="${p.name}: выбрать вариант">${ICONS[p.icon || "box"]}</button>
       <div class="card-body">
-        <span class="card-cat">${CATS.find((c) => c.id === (p.cat || "priv")).label}</span>
+        <span class="card-cat" data-cat="${p.cat || "priv"}">${CARD_CAT[p.cat || "priv"]}</span>
         <button class="card-name" type="button" data-open="${p.id}">${p.name}</button>
         <span class="card-price">${cardPrice(p)}</span>
         <button class="add" type="button" data-open="${p.id}">Выбрать вариант</button>
@@ -334,7 +341,8 @@ function openProduct(id) {
   pm.type = typeOf(p);
   pm.term = entry && entry.term != null ? entry.term : 0;
   pm.name.textContent = p.name;
-  pm.cat.textContent = CATS.find((c) => c.id === (p.cat || "priv")).label;
+  pm.cat.textContent = CARD_CAT[p.cat || "priv"];
+  pm.cat.dataset.cat = p.cat || "priv";
   pm.img.innerHTML = ICONS[p.icon || "box"];
   pm.feat.innerHTML = featHtml(p);
   pm.last = document.activeElement;
