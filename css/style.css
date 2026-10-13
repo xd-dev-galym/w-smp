@@ -573,3 +573,17 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
 .tt-hint { margin: 0 0 0.9rem; color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
 .tt-err { margin: 0 0 0.6rem; min-height: 1.2em; color: #ff6b6b; font-size: 0.88rem; }
 .pm-add:disabled, #pm-add:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Плавная смена иконки меню: три полоски превращаются в крестик */
+.nav-toggle .burger { position: relative; display: block; width: 20px; height: 20px; }
+.nav-toggle .burger i { position: absolute; left: 0; width: 100%; height: 2px; border-radius: 2px; background: currentColor;
+  transition: top 0.35s ease, transform 0.35s ease, opacity 0.25s ease; }
+.nav-toggle .burger i:nth-child(1) { top: 4px; }
+.nav-toggle .burger i:nth-child(2) { top: 9px; }
+.nav-toggle .burger i:nth-child(3) { top: 14px; }
+.nav-toggle[aria-expanded="true"] .burger i:nth-child(1) { top: 9px; transform: rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .burger i:nth-child(2) { opacity: 0; transform: scaleX(0.3); }
+.nav-toggle[aria-expanded="true"] .burger i:nth-child(3) { top: 9px; transform: rotate(-45deg); }
+@media (prefers-reduced-motion: reduce) {
+  .nav-toggle .burger i { transition: none; }
+}
