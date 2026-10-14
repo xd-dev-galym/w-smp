@@ -63,6 +63,7 @@
       <ul>
         <li><a href="${root}oferta.html">Договор-оферта</a></li>
         <li><a href="${root}agreement.html">Пользовательское соглашение</a></li>
+        <li><a href="${root}privacy.html">Политика конфиденциальности</a></li>
       </ul>
     </div>
   </div>
