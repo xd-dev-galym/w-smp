@@ -595,3 +595,18 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
   transition: transform 0.45s cubic-bezier(0.22, 0.8, 0.3, 1), width 0.45s cubic-bezier(0.22, 0.8, 0.3, 1),
               height 0.45s cubic-bezier(0.22, 0.8, 0.3, 1), opacity 0.25s ease; }
 @media (prefers-reduced-motion: reduce) { .nav-pill { transition: none; } }
+
+/* Блок «Готовы к сотрудничеству?» на странице медиа */
+.cta-card { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem 2rem; flex-wrap: wrap;
+  margin-top: 3rem; padding: clamp(1.4rem, 3vw, 2.2rem) clamp(1.4rem, 3.5vw, 2.6rem); border-radius: 22px;
+  border: 1px solid rgba(34, 160, 254, 0.35);
+  background: radial-gradient(120% 160% at 100% 50%, rgba(34, 160, 254, 0.16), rgba(34, 160, 254, 0) 60%), var(--panel); }
+.cta-card-text { flex: 1 1 360px; min-width: 0; }
+.cta-card h2 { margin: 0 0 0.6rem; font: 800 clamp(1.4rem, 2.6vw, 1.8rem)/1.2 var(--font-head); color: var(--text); }
+.cta-card p { margin: 0; color: var(--muted); line-height: 1.7; }
+.cta-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.15rem 0.7rem; border-radius: 999px;
+  border: 1px solid rgba(34, 160, 254, 0.45); background: rgba(34, 160, 254, 0.14); color: var(--accent);
+  font: 700 0.95rem var(--font-body); cursor: pointer; transition: background-color 0.25s ease, border-color 0.25s ease; }
+.cta-chip:hover { background: rgba(34, 160, 254, 0.24); border-color: var(--accent); }
+.cta-card .cta-card-btn { width: auto; flex: 0 0 auto; padding: 1rem 1.8rem; border-radius: 14px; font-weight: 800; }
+@media (max-width: 700px) { .cta-card .cta-card-btn { width: 100%; } }
