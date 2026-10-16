@@ -638,3 +638,10 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
   .cur-menu { width: min(290px, 100%); }
 }
 @media (prefers-reduced-motion: reduce) { .cur-menu, .cur-chev { transition: none; } }
+
+/* Иконки привилегий на карточках и в окне товара */
+.card-img .rk, .pm-img .rk { width: clamp(84px, 44%, 132px); height: auto; fill: none; stroke: currentColor; stroke-width: 2.6;
+  stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 14px currentColor); transition: transform 0.4s ease; }
+.pm-img .rk { width: clamp(120px, 50%, 220px); }
+.card:hover .card-img .rk { transform: scale(1.07) translateY(-2px); }
+@media (prefers-reduced-motion: reduce) { .card-img .rk { transition: none; } }
