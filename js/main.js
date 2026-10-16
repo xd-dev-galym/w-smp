@@ -112,6 +112,27 @@ const ICONS = {
   coin: '<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 9l3.5 7 3.5-7"/></svg>',
 };
 
+// Иконки привилегий: у каждой свой цвет (в style), рисунок идёт линией цвета currentColor
+Object.assign(ICONS, {
+  crown: '<svg class="rk" viewBox="0 0 64 64" style="color:#ffc83d" aria-hidden="true"><path d="M12 20 L22 32 L32 14 L42 32 L52 20 L48 44 H16 Z" fill="currentColor" fill-opacity=".16"/><path d="M16 50h32"/><circle cx="12" cy="20" r="3" fill="currentColor"/><circle cx="32" cy="14" r="3" fill="currentColor"/><circle cx="52" cy="20" r="3" fill="currentColor"/><path d="M32 31 l4 5 -4 5 -4 -5 z" fill="currentColor" fill-opacity=".6"/></svg>',
+  infinity: '<svg class="rk" viewBox="0 0 64 64" style="color:#9b7bff" aria-hidden="true"><path d="M32 32 C26 22 10 22 10 32 C10 42 26 42 32 32 C38 22 54 22 54 32 C54 42 38 42 32 32 Z" fill="currentColor" fill-opacity=".16" stroke-width="4"/><path d="M50 8v10M45 13h10M13 48v7M9.5 51.5h7"/></svg>',
+  stinger: '<svg class="rk" viewBox="0 0 64 64" style="color:#ffb020" aria-hidden="true"><path d="M32 4 L38 36 L32 44 L26 36 Z" fill="currentColor" fill-opacity=".16"/><path d="M32 12 V36"/><path d="M24 4h16"/><path d="M32 50 C37 55 39 58 32 61 C25 58 27 55 32 50 Z" fill="currentColor"/></svg>',
+  dragon: '<svg class="rk" viewBox="0 0 64 64" style="color:#ff5a4d" aria-hidden="true"><path d="M6 34 C16 20 48 20 58 34 C48 48 16 48 6 34 Z" fill="currentColor" fill-opacity=".16"/><circle cx="32" cy="34" r="9" fill="currentColor" fill-opacity=".16"/><path d="M32 23 C37 29 37 39 32 45 C27 39 27 29 32 23 Z" fill="currentColor"/><path d="M10 24 L6 13 L17 19 M54 24 L58 13 L47 19"/></svg>',
+  swords: '<svg class="rk" viewBox="0 0 64 64" style="color:#ff7a45" aria-hidden="true"><g transform="rotate(40 32 32)"><path d="M32 3 L37 10 V38 H27 V10 Z" fill="currentColor" fill-opacity=".16"/><path d="M20 38h24M32 38v12"/><circle cx="32" cy="54" r="2.6" fill="currentColor"/></g><g transform="rotate(-40 32 32)"><path d="M32 3 L37 10 V38 H27 V10 Z" fill="currentColor" fill-opacity=".16"/><path d="M20 38h24M32 38v12"/><circle cx="32" cy="54" r="2.6" fill="currentColor"/></g></svg>',
+  legend: '<svg class="rk" viewBox="0 0 64 64" style="color:#ffd84a" aria-hidden="true"><path d="M32.0,8.0 L36.9,21.2 L51.0,21.8 L40.0,30.6 L43.8,44.2 L32.0,36.4 L20.2,44.2 L24.0,30.6 L13.0,21.8 L27.1,21.2 Z" fill="currentColor" fill-opacity=".16"/><path d="M12 40 C12 52 21 59 32 59 C43 59 52 52 52 40"/><path d="M16 49l-5-1M24 55l-3 4M48 49l5-1M40 55l3 4"/></svg>',
+  mask: '<svg class="rk" viewBox="0 0 64 64" style="color:#7a8cff" aria-hidden="true"><path d="M12 24 C12 14 52 14 52 24 C52 42 42 54 32 54 C22 54 12 42 12 24 Z" fill="currentColor" fill-opacity=".16"/><path d="M18 26 C22 22 28 24 29 29 C25 32 19 31 18 26 Z" fill="currentColor" fill-opacity=".85"/><path d="M46 26 C42 22 36 24 35 29 C39 32 45 31 46 26 Z" fill="currentColor" fill-opacity=".85"/><path d="M24 43 C28 47 36 47 40 43"/></svg>',
+  gem: '<svg class="rk" viewBox="0 0 64 64" style="color:#35d4ff" aria-hidden="true"><path d="M18 16 H46 L58 28 L32 58 L6 28 Z" fill="currentColor" fill-opacity=".16"/><path d="M6 28h52M22 28 L32 58 L42 28 M22 28 L27 16 M42 28 L37 16 M27 16 L32 28 L37 16"/></svg>',
+  ghost: '<svg class="rk" viewBox="0 0 64 64" style="color:#9fd4ff" aria-hidden="true"><path d="M14 56 V28 C14 10 50 10 50 28 V56 L44 50 L38 56 L32 50 L26 56 L20 50 Z" fill="currentColor" fill-opacity=".16"/><circle cx="25" cy="29" r="3.2" fill="currentColor"/><circle cx="39" cy="29" r="3.2" fill="currentColor"/><path d="M29.5 38 a2.5 3.4 0 1 0 5 0 a2.5 3.4 0 1 0 -5 0" fill="currentColor" fill-opacity=".16"/></svg>',
+  shield: '<svg class="rk" viewBox="0 0 64 64" style="color:#f6e7b0" aria-hidden="true"><path d="M32 7 L53 14 V30 C53 44 43 52 32 58 C21 52 11 44 11 30 V14 Z" fill="currentColor" fill-opacity=".16"/><path d="M32 18 V47 M21 28 H43" stroke-width="3.4"/></svg>',
+  bolt: '<svg class="rk" viewBox="0 0 64 64" style="color:#a6ff4d" aria-hidden="true"><path d="M37 5 L14 37 H29 L25 59 L51 25 H36 Z" fill="currentColor" fill-opacity=".16"/></svg>',
+  castle: '<svg class="rk" viewBox="0 0 64 64" style="color:#c070ff" aria-hidden="true"><path d="M15 57 V28 H20 V22 H26 V28 H30 V22 H34 V28 H38 V22 H44 V28 H49 V57 Z" fill="currentColor" fill-opacity=".16"/><path d="M27 57 V46 a5 5 0 0 1 10 0 V57"/><path d="M32 22 V7"/><path d="M32 7 L46 12 L32 17 Z" fill="currentColor"/><path d="M32 34 v5"/></svg>',
+  axe: '<svg class="rk" viewBox="0 0 64 64" style="color:#4ade80" aria-hidden="true"><g transform="rotate(24 32 32)"><path d="M32 6 V59" stroke-width="3.6"/><path d="M32 9 C51 6 60 21 55 38 C48 31 40 30 32 33 Z" fill="currentColor" fill-opacity=".16"/><path d="M32 14 L20 19 L32 25" fill="currentColor" fill-opacity=".16"/></g></svg>',
+});
+const RANK_ICON = {
+  sponsor: "crown", eternity: "infinity", stinger: "stinger", dragon: "dragon", avenger: "swords", legend: "legend", phantom: "mask", master: "gem", ghost: "ghost", paladin: "shield", geroy: "bolt", lord: "castle", voin: "axe",
+};
+PRODUCTS.forEach((p) => { if (!p.icon && RANK_ICON[p.id]) p.icon = RANK_ICON[p.id]; });
+
 // Категории товаров (порядок кнопок)
 // Подписи бейджей категорий на карточках (CSS делает их заглавными)
 const CARD_CAT = {
