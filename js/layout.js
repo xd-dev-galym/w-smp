@@ -1,4 +1,62 @@
 // Общая шапка, подвал и окно корзины для всех страниц. Меняешь здесь, меняется везде.
+
+// Валюты: цены на сайте указаны в рублях, остальные валюты показываются по ориентировочному курсу
+(function () {
+  const LIST = [
+    { code: "RUB", sym: "₽", name: "Российский рубль", dec: 0 },
+    { code: "KZT", sym: "₸", name: "Казахстанский тенге", dec: 0 },
+    { code: "USD", sym: "$", name: "Доллар США", dec: 2 },
+    { code: "EUR", sym: "€", name: "Евро", dec: 2 },
+    { code: "UAH", sym: "₴", name: "Украинская гривна", dec: 0 },
+  ];
+  // Запасные курсы (за 1 ₽) по данным ЦБ РФ на 08.10.2026, если свежие загрузить не удалось
+  const FALLBACK = { RUB: 1, KZT: 5.307, USD: 0.011699, EUR: 0.010381, UAH: 0.52482 };
+  const KEY = "wsmp-cur", RATES_KEY = "wsmp-rates-v1", TTL = 6 * 3600 * 1000;
+  const rates = Object.assign({}, FALLBACK);
+  let code = "RUB";
+  try { const saved = localStorage.getItem(KEY); if (LIST.some((c) => c.code === saved)) code = saved; } catch (e) {}
+
+  const cur = () => LIST.find((c) => c.code === code);
+  const others = LIST.filter((c) => c.code !== "RUB");
+  const valid = (r) => Boolean(r) && others.every((c) => Number.isFinite(r[c.code]) && r[c.code] > 0);
+  const pick = (r) => { const o = {}; others.forEach((c) => { o[c.code] = r[c.code]; }); return o; };
+  const apply = (r) => others.forEach((c) => { rates[c.code] = r[c.code]; });
+  const emit = () => document.dispatchEvent(new CustomEvent("currency:change"));
+
+  // Свежие курсы запрашиваем только если выбрана не рублёвая валюта, ответ хранится 6 часов
+  function loadRates() {
+    if (code === "RUB") return;
+    try {
+      const c = JSON.parse(localStorage.getItem(RATES_KEY));
+      if (c && Date.now() - c.t < TTL && valid(c.rates)) { apply(c.rates); return; }
+    } catch (e) {}
+    fetch("https://open.er-api.com/v6/latest/RUB")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d || d.result !== "success" || !valid(d.rates)) return;
+        const r = pick(d.rates);
+        apply(r);
+        try { localStorage.setItem(RATES_KEY, JSON.stringify({ t: Date.now(), rates: r })); } catch (e) {}
+        emit();
+      })
+      .catch(() => {});
+  }
+
+  function fmt(rub) {
+    const c = cur();
+    return (rub * rates[c.code]).toLocaleString("ru-RU", { minimumFractionDigits: c.dec, maximumFractionDigits: c.dec }) + " " + c.sym;
+  }
+  function set(next) {
+    if (next === code || !LIST.some((c) => c.code === next)) return;
+    code = next;
+    try { localStorage.setItem(KEY, code); } catch (e) {}
+    loadRates();
+    emit();
+  }
+
+  window.WCUR = { LIST, code: () => code, cur, fmt, set };
+  loadRates();
+})();
 // На странице нужен <body data-root="" data-page="..."> (в папке privilege/: data-root="../").
 (function () {
   const root = document.body.dataset.root || "";
@@ -14,6 +72,17 @@
   const navHtml = links.map(([key, href, label, icon]) =>
     `<a href="${root}${href}"${key === page ? ' aria-current="page"' : ""}><span class="ico">${icon}</span>${label}</a>`).join("");
 
+  const curHtml = `
+        <div class="cur" id="cur">
+          <button class="cur-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="cur-menu" aria-label="Валюта">
+            <span class="cur-sym" id="cur-sym">${WCUR.cur().sym}</span>
+            <svg class="cur-chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="cur-menu" id="cur-menu" role="group" aria-label="Выбор валюты">
+            ${WCUR.LIST.map((c) => `<button class="cur-opt" type="button" data-cur="${c.code}" aria-pressed="${c.code === WCUR.code()}"><b>${c.sym}</b><span>${c.code} · ${c.name}</span></button>`).join("")}
+            <p class="cur-note">Оплата в рублях. Остальные валюты показаны по ориентировочному курсу.</p>
+          </div>
+        </div>`;
   const header = `
 <div class="island-wrap">
   <div class="wrap">
@@ -21,7 +90,7 @@
       <a class="logo" href="${root}index.html">Warden<span>SMP</span></a>
       <div class="online"><div><b data-online>—</b><small>игроков онлайн</small></div></div>
       <nav class="nav" id="nav">${navHtml}</nav>
-      <div class="island-actions">
+      <div class="island-actions">${curHtml}
         <button class="icon-btn" type="button" data-cart-open aria-haspopup="dialog" aria-label="Корзина">
           ${ic('<path d="M3 4h2l2.4 10.2a1 1 0 0 0 1 .8h8.2a1 1 0 0 0 1-.8L19 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/>')}
           <span class="badge"></span>
@@ -98,7 +167,8 @@
     </div>
   </div>
   <div class="cart-foot">
-    <div class="cart-total"><span>К оплате</span><b id="cart-total">— ₽</b></div>
+    <div class="cart-total"><span>К оплате</span><b id="cart-total">—</b></div>
+    <p class="cart-rub" id="cart-rub" hidden></p>
     <label class="terms"><input type="checkbox" id="f-terms"> <span>Принимаю условия <a href="${root}oferta.html" target="_blank" rel="noopener">оферты</a></span></label>
     <button class="btn btn-primary pay" id="cart-pay" type="button" disabled>Перейти к оплате ${ic('<path d="M5 12h14M13 6l6 6-6 6"/>')}</button>
     <p class="cart-hint" id="cart-hint" role="status"></p>
@@ -119,7 +189,8 @@
   const giftSw = $("f-gift"), terms = $("f-terms"), pay = $("cart-pay"), hint = $("cart-hint");
   const BUYER_KEY = "wsmp-buyer";
 
-  const money = (n) => n.toLocaleString("ru-RU") + " ₽";
+  const money = (n) => WCUR.fmt(n);                          // для показа: в выбранной валюте
+  const rub = (n) => n.toLocaleString("ru-RU") + " ₽";        // для оплаты и заказа: всегда в рублях
   const plural = (n) => (n % 10 === 1 && n % 100 !== 11) ? "товар" : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? "товара" : "товаров";
   const nickOk = (v) => /^[A-Za-z0-9_]{3,16}$/.test(v.trim());
   const mailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
@@ -150,7 +221,11 @@
     const total = items.reduce((s, i) => s + i.price, 0);
     cart.classList.toggle("is-empty", items.length === 0);
     sub.textContent = items.length ? `${items.length} ${plural(items.length)} на ${money(total)}` : "Пока пусто";
-    totalEl.textContent = items.length ? money(total) : "— ₽";
+    totalEl.textContent = items.length ? money(total) : "—";
+    const rubEl = $("cart-rub");
+    const foreign = items.length > 0 && WCUR.code() !== "RUB";
+    rubEl.hidden = !foreign;
+    if (foreign) rubEl.textContent = `Оплата в рублях: ${rub(total)}. Другие валюты показаны по ориентировочному курсу.`;
     list.innerHTML = items.map(({ p, label, price }) => `
       <li class="cart-item">
         <span class="cart-thumb">${ICONS[p.icon || "box"]}</span>
@@ -213,6 +288,7 @@
     validate();
   }));
   terms.addEventListener("change", validate);
+  document.addEventListener("currency:change", render);
 
   // Пока оплата идёт через бота поддержки: заказ копируется и открывается чат с ботом.
   // Когда подключишь платёжную систему, замени содержимое этого обработчика на переход к оплате.
@@ -223,8 +299,8 @@
     const lines = ["Заказ WardenSMP", `Ник: ${nick.value.trim()}`, `E-mail: ${email.value.trim()}`];
     if (isGift()) lines.push(`Подарок для: ${friend.value.trim()}`);
     lines.push("Товары:");
-    items.forEach(({ p, label, price }) => lines.push(`• ${p.name} — ${label} — ${money(price)}`));
-    lines.push(`Итого: ${money(total)}`);
+    items.forEach(({ p, label, price }) => lines.push(`• ${p.name} — ${label} — ${rub(price)}`));
+    lines.push(`Итого: ${rub(total)}`);
     const text = lines.join("\n");
 
     const copied = navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject();
@@ -233,6 +309,23 @@
       .then(() => { hint.textContent = "Заказ скопирован. Вставь его в чат с ботом поддержки и отправь."; })
       .catch(() => { hint.textContent = "Не удалось скопировать заказ. Отправь его боту вручную:\n" + text; });
   });
+})();
+
+// Выбор валюты в шапке
+(function () {
+  const box = document.getElementById("cur");
+  if (!box) return;
+  const btn = box.querySelector(".cur-btn"), sym = document.getElementById("cur-sym");
+  const setOpen = (on) => { box.classList.toggle("open", on); btn.setAttribute("aria-expanded", String(on)); };
+  const paint = () => {
+    sym.textContent = WCUR.cur().sym;
+    box.querySelectorAll(".cur-opt").forEach((o) => o.setAttribute("aria-pressed", String(o.dataset.cur === WCUR.code())));
+  };
+  btn.addEventListener("click", () => setOpen(!box.classList.contains("open")));
+  box.querySelectorAll(".cur-opt").forEach((o) => o.addEventListener("click", () => { WCUR.set(o.dataset.cur); paint(); setOpen(false); }));
+  document.addEventListener("click", (e) => { if (!box.contains(e.target)) setOpen(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && box.classList.contains("open")) { setOpen(false); btn.focus(); } });
+  document.addEventListener("currency:change", paint);
 })();
 
 // Плавный уход со страницы: контент гаснет, потом открывается следующая страница (она сама плавно появляется)
