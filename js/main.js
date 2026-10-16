@@ -99,8 +99,14 @@ function paintCart() {
   const n = cart.length;
   if (badge) { badge.textContent = n; badge.classList.toggle("on", n > 0); }
 }
-const money = (n) => n.toLocaleString("ru-RU") + " ₽";
+const money = (n) => WCUR.fmt(n); // цены хранятся в рублях, показываются в выбранной валюте
 const fmtNum = (n) => n.toLocaleString("ru-RU");
+
+// Цены, записанные прямо в HTML (например, на странице акций): data-price-rub="3599"
+function paintStaticPrices() {
+  document.querySelectorAll("[data-price-rub]").forEach((el) => { el.textContent = money(Number(el.dataset.priceRub)); });
+}
+paintStaticPrices();
 const ICONS = {
   box: '<svg class="ic" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>',
   coin: '<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 9l3.5 7 3.5-7"/></svg>',
@@ -541,3 +547,10 @@ if (toggle && nav) {
     toggle.setAttribute("aria-expanded", String(open));
   });
 }
+
+// Смена валюты в шапке: перерисовываем все цены
+document.addEventListener("currency:change", () => {
+  paintStaticPrices();
+  renderGrid();
+  if (pm && pm.el.classList.contains("open")) { if (pm.type === "title") paintTitleBuy(); else paintPm(); }
+});
