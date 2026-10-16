@@ -610,3 +610,31 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
 .cta-chip:hover { background: rgba(34, 160, 254, 0.24); border-color: var(--accent); }
 .cta-card .cta-card-btn { width: auto; flex: 0 0 auto; padding: 1rem 1.8rem; border-radius: 14px; font-weight: 800; }
 @media (max-width: 700px) { .cta-card .cta-card-btn { width: 100%; } }
+
+/* Выбор валюты рядом с корзиной */
+.cur { position: relative; }
+.cur-btn { display: inline-flex; align-items: center; gap: 0.35rem; height: 44px; padding: 0 0.8rem; border-radius: 12px; cursor: pointer;
+  background: var(--panel-2); border: 1px solid var(--line); color: var(--muted); font: 700 1rem var(--font-body);
+  transition: color 0.2s ease, border-color 0.2s ease; }
+.cur-btn:hover, .cur.open .cur-btn { color: var(--text); border-color: var(--accent); }
+.cur-chev { transition: transform 0.3s ease; }
+.cur.open .cur-chev { transform: rotate(180deg); }
+.cur-menu { position: absolute; right: 0; top: calc(100% + 10px); z-index: 30; width: 280px; padding: 0.5rem;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s; }
+.cur.open .cur-menu { opacity: 1; visibility: visible; transform: none; }
+.cur-opt { display: flex; align-items: center; gap: 0.7rem; width: 100%; padding: 0.5rem 0.7rem; border-radius: 10px; border: 1px solid transparent;
+  background: transparent; color: var(--muted); font: 500 0.92rem var(--font-body); text-align: left; cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
+.cur-opt b { display: grid; place-items: center; flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px; background: var(--panel-2); color: var(--text); font-size: 0.95rem; }
+.cur-opt:hover { background: var(--panel-2); color: var(--text); }
+.cur-opt[aria-pressed="true"] { color: var(--accent); background: rgba(34, 160, 254, 0.12); border-color: rgba(34, 160, 254, 0.35); }
+.cur-opt[aria-pressed="true"] b { color: var(--accent); }
+.cur-note { margin: 0.5rem 0.4rem 0.2rem; color: var(--muted); font-size: 0.78rem; line-height: 1.45; }
+.cart-rub { margin: -0.4rem 0 1rem; color: var(--muted); font-size: 0.82rem; line-height: 1.45; }
+@media (max-width: 600px) {
+  .cur { position: static; }
+  .cur-menu { width: min(290px, 100%); }
+}
+@media (prefers-reduced-motion: reduce) { .cur-menu, .cur-chev { transition: none; } }
