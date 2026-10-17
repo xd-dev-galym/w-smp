@@ -133,6 +133,21 @@ const RANK_ICON = {
 };
 PRODUCTS.forEach((p) => { if (!p.icon && RANK_ICON[p.id]) p.icon = RANK_ICON[p.id]; });
 
+// Фото привилегий: голова и половина туловища, фон вырезан (img/privileges/*.webp, высота 560, w — ширина).
+// c — цвет свечения за персонажем.
+const PHOTO = {
+  sponsor:  { f: "sponsor",  w: 1001, c: "#ffc83d" }, eternity: { f: "eternity", w: 809, c: "#9b7bff" },
+  stinger:  { f: "stinger",  w: 487,  c: "#ffb020" }, dragon:   { f: "dragon",   w: 653, c: "#ff5a4d" },
+  avenger:  { f: "avenger",  w: 908,  c: "#ff7a45" }, legend:   { f: "legend",   w: 569, c: "#ffd84a" },
+  phantom:  { f: "phantom",  w: 650,  c: "#7a8cff" }, master:   { f: "master",   w: 476, c: "#35d4ff" },
+  ghost:    { f: "ghost",    w: 643,  c: "#9fd4ff" }, paladin:  { f: "paladin",  w: 880, c: "#f6e7b0" },
+  geroy:    { f: "hero",     w: 828,  c: "#a6ff4d" }, lord:     { f: "lord",     w: 692, c: "#c070ff" },
+  voin:     { f: "voin",     w: 513,  c: "#4ade80" },
+};
+const artHtml = (p, eager) => PHOTO[p.id]
+  ? `<img class="rank-photo" src="img/privileges/${PHOTO[p.id].f}.webp" alt="" width="${PHOTO[p.id].w}" height="560" decoding="async"${eager ? "" : ' loading="lazy"'}>`
+  : ICONS[p.icon || "box"];
+
 // Категории товаров (порядок кнопок)
 // Подписи бейджей категорий на карточках (CSS делает их заглавными)
 const CARD_CAT = {
@@ -269,7 +284,7 @@ function renderGrid() {
   }
   grid.innerHTML = list.map((p) => `
     <article class="card">
-      <button class="card-img" type="button" data-open="${p.id}" aria-label="${p.name}: выбрать вариант">${ICONS[p.icon || "box"]}</button>
+      <button class="card-img${PHOTO[p.id] ? " has-photo" : ""}"${PHOTO[p.id] ? ` style="--rk:${PHOTO[p.id].c}"` : ""} type="button" data-open="${p.id}" aria-label="${p.name}: выбрать вариант">${artHtml(p)}</button>
       <div class="card-body">
         <span class="card-cat" data-cat="${p.cat || "priv"}">${CARD_CAT[p.cat || "priv"]}</span>
         <button class="card-name" type="button" data-open="${p.id}">${p.name}</button>
@@ -434,7 +449,9 @@ function openProduct(id) {
   pm.name.textContent = p.name;
   pm.cat.textContent = CARD_CAT[p.cat || "priv"];
   pm.cat.dataset.cat = p.cat || "priv";
-  pm.img.innerHTML = ICONS[p.icon || "box"];
+  pm.img.innerHTML = artHtml(p, true);
+  pm.img.classList.toggle("has-photo", Boolean(PHOTO[p.id]));
+  if (PHOTO[p.id]) pm.img.style.setProperty("--rk", PHOTO[p.id].c); else pm.img.style.removeProperty("--rk");
   pm.feat.innerHTML = featHtml(p);
   pm.last = document.activeElement;
   paintPm();
