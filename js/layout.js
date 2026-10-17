@@ -105,35 +105,49 @@
 
   const footer = `
 <footer class="site-footer">
-  <div class="wrap foot">
-    <div class="foot-brand">
-      <a class="logo" href="${root}index.html">Warden<span>SMP</span></a>
-      <p>© 2025-2026 все права защищены</p>
-      <p>WardenSMP не связан с Mojang или Microsoft, все средства идут на развитие проекта.</p>
-    </div>
-    <div>
-      <h3>Мы в соц. сетях</h3>
-      <ul>
-        <li><a href="https://discord.gg/DGthvPcgk8" target="_blank" rel="noopener">Discord</a></li>
-        <li><a href="https://t.me/w_smp" target="_blank" rel="noopener">Telegram</a></li>
-        <li><a href="https://vk.ru/w_smp" target="_blank" rel="noopener">VK</a></li>
-      </ul>
-    </div>
-    <div>
-      <h3>Информация</h3>
-      <ul>
-        <li><a href="${root}rules.html">Правила</a></li>
-        <li><a href="${root}media.html">Стать медиа</a></li>
-        <li><a href="${root}contacts.html">Контакты</a></li>
-      </ul>
-    </div>
-    <div>
-      <h3>Юридическая информация</h3>
-      <ul>
-        <li><a href="${root}oferta.html">Договор-оферта</a></li>
-        <li><a href="${root}agreement.html">Пользовательское соглашение</a></li>
-        <li><a href="${root}privacy.html">Политика конфиденциальности</a></li>
-      </ul>
+  <div class="wrap">
+    <div class="sf-card">
+      <div class="sf-top">
+        <div class="sf-brand">
+          <a class="logo" href="${root}index.html">Warden<span>SMP</span></a>
+          <div class="sf-online"><i aria-hidden="true"></i>Онлайн: <b data-online>—</b></div>
+          <div class="sf-social">
+            <a href="https://vk.ru/w_smp" target="_blank" rel="noopener" aria-label="VK" title="VK"><span class="sf-vk">VK</span></a>
+            <a href="https://discord.gg/DGthvPcgk8" target="_blank" rel="noopener" aria-label="Discord" title="Discord"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4 3v-3H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/></svg></a>
+            <a href="https://t.me/w_smp" target="_blank" rel="noopener" aria-label="Telegram" title="Telegram"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></a>
+          </div>
+        </div>
+        <nav class="sf-col" aria-label="Основное">
+          <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Основное</h3>
+          <ul>
+            <li><a href="${root}index.html">Главная</a></li>
+            <li><a href="${root}akcii.html">Акции</a></li>
+            <li><a href="${root}rules.html">Правила</a></li>
+          </ul>
+        </nav>
+        <nav class="sf-col" aria-label="Игровое">
+          <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 10.5v4M5 12.5h4"/><circle cx="16" cy="11.5" r="1" fill="currentColor"/><circle cx="18.5" cy="14" r="1" fill="currentColor"/></svg>Игровое</h3>
+          <ul>
+            <li><a href="${root}index.html#shop">Магазин</a></li>
+            <li><a href="${root}privileges.html">Привилегии</a></li>
+            <li><a href="${root}media.html">Стать медиа</a></li>
+          </ul>
+        </nav>
+        <nav class="sf-col" aria-label="Информация">
+          <h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r="1" fill="currentColor"/></svg>Информация</h3>
+          <ul>
+            <li><a href="${root}oferta.html">Договор-оферта</a></li>
+            <li><a href="${root}agreement.html">Пользовательское соглашение</a></li>
+            <li><a href="${root}privacy.html">Политика конфиденциальности</a></li>
+            <li><a href="${root}contacts.html">Контакты</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="sf-bottom">
+        <p>WardenSMP<br><a href="mailto:w-smp@outlook.com">w-smp@outlook.com</a></p>
+        <p>WardenSMP не связан с Mojang или Microsoft, все средства идут на развитие проекта.</p>
+        <p>© 2025–2026 WardenSMP. Все права защищены.</p>
+      </div>
     </div>
   </div>
 </footer>`;
