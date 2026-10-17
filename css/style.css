@@ -685,3 +685,15 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
   .sf-top, .sf-bottom { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { .sf-social a, .sf-col a { transition: none; } }
+
+/* Персонаж в шапке главной (вместо кругов-сонара) */
+.hero-art { display: grid; place-items: center; }
+.hero-art::before { content: ""; position: absolute; left: 50%; top: 52%; width: 92%; aspect-ratio: 1; transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, rgba(34, 160, 254, 0.28), rgba(34, 160, 254, 0.08) 55%, rgba(34, 160, 254, 0) 100%);
+  pointer-events: none; }
+.hero-art picture { position: relative; display: block; animation: hero-float 6s ease-in-out infinite; }
+.hero-art img { display: block; width: auto; height: auto; max-width: 100%; max-height: 540px;
+  filter: drop-shadow(0 24px 36px rgba(0, 0, 0, 0.55)); }
+@keyframes hero-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@media (max-width: 900px) { .hero-art img { max-height: 340px; } }
+@media (prefers-reduced-motion: reduce) { .hero-art picture { animation: none; } }
