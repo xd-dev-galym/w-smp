@@ -764,3 +764,6 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
   filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.5)); transition: transform 0.4s ease; }
 .card:hover .card-img .rank-photo { transform: translateX(-50%) scale(1.05); }
 @media (prefers-reduced-motion: reduce) { .card-img .rank-photo { transition: none; } }
+
+/* Широкие кадры (Спонсор, Eternity, Паладин): центр на голове, края с руками уходят за рамку карточки */
+.card-img .rank-photo.wide, .pm-img .rank-photo.wide { max-width: none; }
