@@ -753,3 +753,14 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
   .ct-soon { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .ct-art picture { animation: none; } .ct-card, .ct-arrow { transition: none; } }
+
+/* Фото привилегий: голова и полтуловища, снизу плавно растворяются, за ними свечение цвета ранга */
+.card-img.has-photo, .pm-img.has-photo { position: relative; overflow: hidden; display: block;
+  background: radial-gradient(62% 78% at 50% 82%, color-mix(in srgb, var(--rk, #22a0fe) 38%, transparent), transparent 74%),
+              radial-gradient(circle at 50% 40%, #11263a, var(--panel-2)); }
+.card-img .rank-photo, .pm-img .rank-photo { position: absolute; left: 50%; bottom: 0; width: auto; height: 94%; max-width: 96%;
+  object-fit: contain; object-position: center bottom; transform: translateX(-50%); transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.5)); transition: transform 0.4s ease; }
+.card:hover .card-img .rank-photo { transform: translateX(-50%) scale(1.05); }
+@media (prefers-reduced-motion: reduce) { .card-img .rank-photo { transition: none; } }
