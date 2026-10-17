@@ -519,11 +519,11 @@ document.querySelectorAll("[data-copy]").forEach((btn) => {
 });
 
 // Игроков онлайн
-const online = document.querySelector("[data-online]");
-if (online) {
+const onlineEls = document.querySelectorAll("[data-online]");
+if (onlineEls.length) {
   fetch("https://api.mcsrvstat.us/3/mc.w-smp.in")
     .then((r) => r.json())
-    .then((d) => { if (d.online && d.players) online.textContent = d.players.online + "/" + d.players.max; })
+    .then((d) => { if (d.online && d.players) onlineEls.forEach((el) => { el.textContent = d.players.online + "/" + d.players.max; }); })
     .catch(() => {});
 }
 
