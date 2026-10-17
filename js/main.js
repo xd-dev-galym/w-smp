@@ -138,14 +138,14 @@ PRODUCTS.forEach((p) => { if (!p.icon && RANK_ICON[p.id]) p.icon = RANK_ICON[p.i
 const PHOTO = {
   sponsor:  { f: "sponsor",  w: 950,  c: "#ffc83d", wide: 1 }, eternity: { f: "eternity", w: 952, c: "#9b7bff", wide: 1 },
   stinger:  { f: "stinger",  w: 487,  c: "#ffb020" }, dragon:   { f: "dragon",   w: 653, c: "#ff5a4d" },
-  avenger:  { f: "avenger",  w: 908,  c: "#ff7a45" }, legend:   { f: "legend",   w: 569, c: "#ffd84a" },
+  avenger:  { f: "avenger",  w: 952,  c: "#ff7a45", wide: 1 }, legend:   { f: "legend",   w: 569, c: "#ffd84a" },
   phantom:  { f: "phantom",  w: 650,  c: "#7a8cff" }, master:   { f: "master",   w: 476, c: "#35d4ff" },
   ghost:    { f: "ghost",    w: 643,  c: "#9fd4ff" }, paladin:  { f: "paladin",  w: 953, c: "#f6e7b0", wide: 1 },
-  geroy:    { f: "hero",     w: 828,  c: "#a6ff4d" }, lord:     { f: "lord",     w: 692, c: "#c070ff" },
+  geroy:    { f: "hero",     w: 952,  c: "#a6ff4d", wide: 1 }, lord:     { f: "lord",     w: 692, c: "#c070ff" },
   voin:     { f: "voin",     w: 513,  c: "#4ade80" },
 };
 const artHtml = (p, eager) => PHOTO[p.id]
-  ? `<img class="rank-photo${PHOTO[p.id].wide ? " wide" : ""}" src="img/privileges/${PHOTO[p.id].f}.webp?v=2" alt="" width="${PHOTO[p.id].w}" height="560" decoding="async"${eager ? "" : ' loading="lazy"'}>`
+  ? `<img class="rank-photo${PHOTO[p.id].wide ? " wide" : ""}" src="img/privileges/${PHOTO[p.id].f}.webp?v=3" alt="" width="${PHOTO[p.id].w}" height="560" decoding="async"${eager ? "" : ' loading="lazy"'}>`
   : ICONS[p.icon || "box"];
 
 // Категории товаров (порядок кнопок)
