@@ -767,3 +767,14 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
 
 /* Широкие кадры (Спонсор, Eternity, Паладин): центр на голове, края с руками уходят за рамку карточки */
 .card-img .rank-photo.wide, .pm-img .rank-photo.wide { max-width: none; }
+
+/* Иконки «Размут» и «Разбан»: по центру карточки, мягкое свечение и покачивание */
+.card-img.has-icon, .pm-img.has-icon { background: radial-gradient(52% 52% at 50% 50%, color-mix(in srgb, var(--rk, #22a0fe) 42%, transparent), transparent 74%),
+  radial-gradient(circle at 50% 40%, #11263a, var(--panel-2)); }
+.card-img .rank-photo.icon, .pm-img .rank-photo.icon { left: 50%; top: 50%; bottom: auto; height: 62%; max-width: 62%; object-fit: contain;
+  -webkit-mask-image: none; mask-image: none; transform: translate(-50%, -50%); animation: icon-float 5s ease-in-out infinite;
+  filter: drop-shadow(0 0 22px color-mix(in srgb, var(--rk, #22a0fe) 60%, transparent)) drop-shadow(0 12px 18px rgba(0, 0, 0, 0.45));
+  transition: scale 0.35s ease; }
+.card:hover .card-img .rank-photo.icon { transform: translate(-50%, -50%); scale: 1.08; }
+@keyframes icon-float { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, calc(-50% - 7px)); } }
+@media (prefers-reduced-motion: reduce) { .card-img .rank-photo.icon, .pm-img .rank-photo.icon { animation: none; } }
