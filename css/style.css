@@ -697,3 +697,17 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
 @keyframes hero-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 @media (max-width: 900px) { .hero-art img { max-height: 340px; } }
 @media (prefers-reduced-motion: reduce) { .hero-art picture { animation: none; } }
+
+/* Персонаж крупнее, а свечение привязано к его телу (а не к центру колонки) */
+.hero { overflow-x: clip; }
+.hero-art::before { display: none; }
+.hero-art picture { isolation: isolate; }
+.hero-art picture::before { content: ""; position: absolute; z-index: -1; left: 64%; top: 56%; width: 108%; aspect-ratio: 1;
+  transform: translate(-50%, -50%); pointer-events: none;
+  background: radial-gradient(closest-side, rgba(34, 160, 254, 0.30), rgba(34, 160, 254, 0.09) 55%, rgba(34, 160, 254, 0) 100%); }
+.hero-art { min-height: 460px; }
+.hero-art img { max-height: 660px; }
+@media (max-width: 900px) {
+  .hero-art { min-height: 300px; }
+  .hero-art img { max-height: 400px; }
+}
