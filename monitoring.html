@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mc.w-smp.in | Мониторинг</title>
+  <meta name="description" content="Мониторинг сервера WardenSMP: онлайн или офлайн, сколько игроков на сервере и версия игры.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#080c12">
+  <link rel="stylesheet" href="css/style.css?v=43">
+</head>
+<body data-root="" data-page="monitoring">
+
+<div id="site-header"></div>
+
+<main>
+  <section class="mon">
+    <div class="wrap">
+      <p class="ct-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Мониторинг</p>
+      <h1>Состояние сервера</h1>
+
+      <div class="mon-grid">
+        <div class="mon-card mon-status" id="mon-status" data-state="loading">
+          <div class="mon-state"><i class="mon-dot" aria-hidden="true"></i><div><small>Сервер</small><b id="mon-state" aria-live="polite">Проверяем…</b></div></div>
+          <div class="mon-actions">
+            <button class="cta-chip" type="button" data-copy="mc.w-smp.in" aria-label="Скопировать адрес сервера">
+              <span class="t">mc.w-smp.in</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+            </button>
+            <button class="btn mon-refresh" type="button" id="mon-refresh">Обновить</button>
+          </div>
+        </div>
+
+        <div class="mon-card">
+          <small>Игроков онлайн</small>
+          <b class="mon-big" id="mon-players">—</b>
+          <div class="mon-bar" aria-hidden="true"><i id="mon-bar"></i></div>
+          <span class="mon-sub" id="mon-max">&nbsp;</span>
+        </div>
+
+        <div class="mon-card">
+          <small>Версия игры</small>
+          <b class="mon-big mon-text" id="mon-version">—</b>
+          <span class="mon-sub">Java Edition</span>
+        </div>
+
+        <div class="mon-card">
+          <small>Обновлено</small>
+          <b class="mon-big mon-text" id="mon-updated">—</b>
+          <span class="mon-sub">Данные обновляются сами</span>
+        </div>
+      </div>
+
+      <p class="mon-note" id="mon-error" role="alert" hidden></p>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="js/layout.js?v=43"></script>
+<script src="js/main.js?v=43"></script>
+<script src="js/monitoring.js?v=43"></script>
+</body>
+</html>
