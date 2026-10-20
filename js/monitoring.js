@@ -2,8 +2,8 @@
 (function () {
   const HOST = "mc.w-smp.in";
   const API = "https://api.mcsrvstat.us/3/" + HOST;
-  const EVERY = 100;      // как часто обновлять
-  const TIMEOUT = 100;    // сколько ждать ответ
+  const EVERY = 900;      // как часто обновлять
+  const TIMEOUT = 900;    // сколько ждать ответ
 
   const $ = (id) => document.getElementById(id);
   const card = $("mon-status");
