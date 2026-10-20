@@ -2,8 +2,8 @@
 (function () {
   const HOST = "mc.w-smp.in";
   const API = "https://api.mcsrvstat.us/3/" + HOST;
-  const EVERY = 1000;      // как часто обновлять
-  const TIMEOUT = 1000;    // сколько ждать ответ
+  const EVERY = 100;      // как часто обновлять
+  const TIMEOUT = 100;    // сколько ждать ответ
 
   const $ = (id) => document.getElementById(id);
   const card = $("mon-status");
@@ -44,7 +44,7 @@
     els.max.textContent = "\u00a0";
     els.bar.style.width = "0%";
     els.version.textContent = "—";
-    showError("Сервер сейчас не отвечает. Мы это видим, проверяем состояние каждые 30 секунд.");
+    showError("Сервер сейчас не отвечает. Мы это видим, проверяем состояние каждую секунду.");
   }
   function paintUnknown() {
     setState("unknown", "Нет данных");
