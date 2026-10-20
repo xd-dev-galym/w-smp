@@ -68,7 +68,6 @@
     ["monitoring", "monitoring.html", "Мониторинг", ic('<path d="M3 12h4l3-8 4 16 3-8h4"/>')],
     ["rules", "rules.html", "Правила", ic('<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>')],
     ["media", "media.html", "Стать медиа", ic('<path d="M3 7h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H3z"/><path d="M17 11l4-2v6l-4-2"/>')],
-    ["contacts", "contacts.html", "Контакты", ic('<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>')],
   ];
   const navHtml = links.map(([key, href, label, icon]) =>
     `<a href="${root}${href}"${key === page ? ' aria-current="page"' : ""}><span class="ico">${icon}</span>${label}</a>`).join("");
