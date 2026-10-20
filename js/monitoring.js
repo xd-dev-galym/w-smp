@@ -1,6 +1,6 @@
 // Страница мониторинга: показываем реальные данные сервера, без каких-либо поправок
 (function () {
-  const HOST = "mc.w-smp.in";
+  const HOST = "wardensmp.minerent.io";
   const API = "https://api.mcsrvstat.us/3/" + HOST;
   const EVERY = 5000;      // как часто обновлять
   const TIMEOUT = 5000;    // сколько ждать ответ
