@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mc.w-smp.in | Паспорт игрока</title>
+  <meta name="description" content="Паспорт игрока WardenSMP: наигранное время, баланс и скин. Открывается по ссылке без входа.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#080c12">
+  <link rel="stylesheet" href="../css/style.css?v=45">
+</head>
+<body data-root="../" data-page="passport">
+
+<div id="site-header"></div>
+
+<main>
+  <section class="pp">
+    <div class="wrap">
+      <p class="ct-eyebrow"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8 17c.8-2 2.3-3 4-3s3.2 1 4 3"/></svg>Паспорт игрока</p>
+      <h1 id="pp-title">Паспорт игрока</h1>
+
+      <!-- Бэкенд ещё не подключён (в js/passport-config.js пустой адрес) -->
+      <div class="pp-note" id="pp-disabled" hidden>
+        Паспорт игрока скоро заработает. Сервис ещё настраивается, загляните позже.
+      </div>
+
+      <form class="pp-search" id="pp-search" autocomplete="off">
+        <input id="pp-nick" type="text" maxlength="17" placeholder="Ник игрока" aria-label="Ник игрока" spellcheck="false" autocapitalize="off">
+        <button class="btn btn-primary" type="submit">Открыть паспорт</button>
+        <button class="btn pp-login-btn" type="button" id="pp-login-btn">Войти через Minecraft</button>
+      </form>
+
+      <p class="pp-note" id="pp-msg" role="alert" hidden></p>
+
+      <!-- Паспорт: слева персонаж, справа характеристики -->
+      <article class="pp-card" id="pp-card" hidden>
+        <div class="pp-skin" id="pp-skin-box">
+          <img id="pp-skin" alt="" width="260" height="420">
+        </div>
+        <div class="pp-info">
+          <div class="pp-head">
+            <h2 id="pp-name"></h2>
+            <span class="pp-badge" id="pp-badge"></span>
+          </div>
+          <div class="pp-stats">
+            <div class="pp-stat"><small>Наиграно</small><b id="pp-time">—</b></div>
+            <div class="pp-stat"><small>Баланс</small><b id="pp-balance">—</b></div>
+          </div>
+          <div class="pp-link">
+            <small>Ссылка на паспорт</small>
+            <div class="pp-link-row">
+              <input id="pp-url" type="text" readonly aria-label="Ссылка на паспорт">
+              <button class="btn" type="button" id="pp-copy">Копировать</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Вход: одноразовый код -->
+      <section class="pp-login" id="pp-login" hidden aria-live="polite"></section>
+
+      <!-- Кабинет владельца: виден только владельцу паспорта -->
+      <section class="pp-owner" id="pp-owner" hidden></section>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="../js/layout.js?v=45"></script>
+<script src="../js/main.js?v=45"></script>
+<script src="../js/passport-config.js?v=45"></script>
+<script src="../js/passport.js?v=45"></script>
+</body>
+</html>
