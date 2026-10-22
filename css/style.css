@@ -809,3 +809,58 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
   border: 1px solid var(--line); background: var(--panel); }
 @media (max-width: 800px) { .mon-grid { grid-template-columns: 1fr; } .mon-status { grid-column: auto; } }
 @media (prefers-reduced-motion: reduce) { .mon-dot, .mon-bar i { animation: none; transition: none; } }
+
+/* Плашка «Паспорт» в шапке: такая же, как выбор валюты */
+.pass-btn { display: inline-flex; align-items: center; gap: 0.5rem; height: 44px; padding: 0 0.9rem; border-radius: 12px;
+  background: var(--panel-2); border: 1px solid var(--line); color: var(--muted); font: 700 0.95rem var(--font-body); white-space: nowrap;
+  transition: color 0.2s ease, border-color 0.2s ease; }
+.pass-btn svg { width: 20px; height: 20px; flex: none; }
+.pass-btn:hover, .pass-btn[aria-current="page"] { color: var(--text); border-color: var(--accent); }
+.pass-txt { max-width: 9rem; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 600px) { .pass-txt { display: none; } .pass-btn { padding: 0 0.7rem; } }
+
+/* Страница паспорта */
+.pp { padding: clamp(2.5rem, 6vw, 4rem) 0 clamp(3rem, 7vw, 5rem); }
+.pp h1 { margin: 0 0 1.6rem; font: 700 clamp(1.9rem, 4.2vw, 3rem)/1.12 var(--font-head); letter-spacing: -0.02em; }
+.pp h2 { margin: 0; font: 800 clamp(1.4rem, 2.8vw, 2rem)/1.15 var(--font-head); }
+.pp h3 { margin: 1.4rem 0 0.7rem; font: 700 1rem var(--font-body); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.pp-search { display: flex; flex-wrap: wrap; gap: 0.7rem; margin: 0 0 1.4rem; }
+.pp-search input, .pp-link input { flex: 1 1 220px; min-width: 0; padding: 0.7rem 1rem; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--panel); color: var(--text); font: 600 1rem var(--font-body); }
+.pp-search input:focus, .pp-link input:focus { outline: none; border-color: var(--accent); }
+.pp-search .btn, .pp-link .btn, .pp-login .btn, .pp-owner .btn { width: auto; padding: 0.7rem 1.2rem; border-radius: 12px; }
+.pp-note { margin: 0 0 1.4rem; padding: 0.9rem 1.1rem; border-radius: 14px; border: 1px solid var(--line); background: var(--panel);
+  color: var(--muted); line-height: 1.55; }
+.pp-card { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 2rem; align-items: center;
+  padding: clamp(1.2rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 24px; background: var(--panel); overflow: hidden; }
+.pp-skin { position: relative; display: grid; place-items: center; min-height: 380px; border-radius: 18px;
+  background: radial-gradient(60% 55% at 50% 58%, rgba(34, 160, 254, 0.28), transparent 72%), radial-gradient(circle at 50% 35%, #11263a, var(--panel-2)); }
+.pp-skin img { display: block; width: auto; height: auto; max-width: 100%; max-height: 420px; filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.5)); }
+.pp-skin.no-skin img { display: none; }
+.pp-skin.no-skin::after { content: "Скин недоступен"; color: var(--muted); font-size: 0.9rem; }
+.pp-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 1rem; margin-bottom: 1.2rem; }
+.pp-head h2 { overflow-wrap: anywhere; }
+.pp-badge { padding: 0.25rem 0.7rem; border-radius: 999px; border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); font: 700 0.78rem var(--font-body); }
+.pp-badge.on { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 50%, transparent); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+.pp-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1.2rem; }
+.pp-stat { display: flex; flex-direction: column; gap: 0.3rem; padding: 1rem 1.1rem; border-radius: 16px; background: var(--panel-2); border: 1px solid var(--line); }
+.pp-stat small, .pp-link small { color: var(--muted); font: 600 0.74rem var(--font-body); letter-spacing: 0.1em; text-transform: uppercase; }
+.pp-stat b { font: 800 clamp(1.2rem, 2.4vw, 1.7rem)/1.2 var(--font-head); color: var(--accent); overflow-wrap: anywhere; }
+.pp-link { display: grid; gap: 0.5rem; }
+.pp-link-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.pp-login, .pp-owner { margin-top: 1.4rem; padding: clamp(1.2rem, 3vw, 1.8rem); border: 1px solid var(--line); border-radius: 22px; background: var(--panel); }
+.pp-sub { margin: 0.6rem 0 1rem; color: var(--muted); line-height: 1.6; }
+.pp-code { display: inline-block; margin: 0.4rem 0 1rem; padding: 0.7rem 1.4rem; border-radius: 16px; border: 1px dashed var(--accent);
+  background: rgba(34, 160, 254, 0.1); color: var(--accent); font: 800 clamp(1.8rem, 5vw, 2.6rem)/1.1 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; letter-spacing: 0.12em; }
+.pp-cmd { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; margin-bottom: 1rem; }
+.pp-cmd code { padding: 0.55rem 0.9rem; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); color: var(--text); font-size: 1rem; overflow-wrap: anywhere; }
+.pp-warn { margin: 0 0 1rem; color: #f0b429; font-size: 0.88rem; line-height: 1.5; }
+.pp-sess-list { display: grid; gap: 0.6rem; }
+.pp-sess { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 0.8rem 1rem; border-radius: 14px; background: var(--panel-2); border: 1px solid var(--line); }
+.pp-sess b { display: block; font: 700 0.95rem var(--font-body); }
+.pp-sess small { color: var(--muted); }
+.pp-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin: 1.2rem 0 0.6rem; }
+.pp-danger { color: #ff6b6b; border-color: rgba(255, 107, 107, 0.45); }
+.pp-danger:hover { border-color: #ff6b6b; }
+@media (max-width: 800px) { .pp-card { grid-template-columns: 1fr; } .pp-skin { min-height: 300px; } .pp-skin img { max-height: 320px; } }
+@media (max-width: 480px) { .pp-stats { grid-template-columns: 1fr; } }
