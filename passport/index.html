@@ -18,43 +18,84 @@
 <main>
   <section class="pp">
     <div class="wrap">
-      <p class="ct-eyebrow"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8 17c.8-2 2.3-3 4-3s3.2 1 4 3"/></svg>Паспорт игрока</p>
-      <h1 id="pp-title">Паспорт игрока</h1>
-
-      <!-- Бэкенд ещё не подключён (в js/passport-config.js пустой адрес) -->
-      <div class="pp-note" id="pp-disabled" hidden>
-        Паспорт игрока скоро заработает. Сервис ещё настраивается, загляните позже.
+      <div class="pp-top">
+        <div>
+          <p class="ct-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8 17c.8-2 2.3-3 4-3s3.2 1 4 3"/></svg>Паспорт игрока</p>
+          <h1 id="pp-title">Паспорт игрока</h1>
+        </div>
+        <form class="pp-search" id="pp-search" autocomplete="off">
+          <label class="pp-field">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+            <input id="pp-nick" type="text" maxlength="17" placeholder="Ник игрока" aria-label="Ник игрока" spellcheck="false" autocapitalize="off">
+          </label>
+          <button class="btn btn-primary" type="submit">Найти</button>
+          <button class="btn pp-login-btn" type="button" id="pp-login-btn">Войти через Minecraft</button>
+        </form>
       </div>
 
-      <form class="pp-search" id="pp-search" autocomplete="off">
-        <input id="pp-nick" type="text" maxlength="17" placeholder="Ник игрока" aria-label="Ник игрока" spellcheck="false" autocapitalize="off">
-        <button class="btn btn-primary" type="submit">Открыть паспорт</button>
-        <button class="btn pp-login-btn" type="button" id="pp-login-btn">Войти через Minecraft</button>
-      </form>
-
+      <!-- Бэкенд ещё не подключён (в js/passport-config.js пустой адрес) -->
+      <div class="pp-note" id="pp-disabled" hidden>Паспорт игрока скоро заработает. Сервис ещё настраивается, загляните позже.</div>
       <p class="pp-note" id="pp-msg" role="alert" hidden></p>
 
       <!-- Паспорт: слева персонаж, справа характеристики -->
-      <article class="pp-card" id="pp-card" hidden>
-        <div class="pp-skin" id="pp-skin-box">
-          <img id="pp-skin" alt="" width="260" height="420">
-        </div>
-        <div class="pp-info">
-          <div class="pp-head">
-            <h2 id="pp-name"></h2>
-            <span class="pp-badge" id="pp-badge"></span>
-          </div>
-          <div class="pp-stats">
-            <div class="pp-stat"><small>Наиграно</small><b id="pp-time">—</b></div>
-            <div class="pp-stat"><small>Баланс</small><b id="pp-balance">—</b></div>
-          </div>
-          <div class="pp-link">
-            <small>Ссылка на паспорт</small>
-            <div class="pp-link-row">
-              <input id="pp-url" type="text" readonly aria-label="Ссылка на паспорт">
-              <button class="btn" type="button" id="pp-copy">Копировать</button>
+      <article class="pp-doc" id="pp-card" hidden>
+        <div class="pp-doc-in">
+          <header class="pp-doc-head">
+            <div class="pp-brand">
+              <span class="pp-mark" aria-hidden="true">W</span>
+              <div><b>WARDENSMP</b><small>Паспорт игрока · Player passport</small></div>
+            </div>
+            <div class="pp-docno"><small>№ паспорта</small><b id="pp-docno">—</b></div>
+          </header>
+
+          <div class="pp-doc-body">
+            <div class="pp-photo pp-skin" id="pp-skin-box">
+              <img id="pp-skin" alt="" width="260" height="420">
+              <svg class="pp-seal" viewBox="0 0 120 120" aria-hidden="true">
+                <defs>
+                  <path id="ppSealPath" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0"/>
+                  <linearGradient id="ppSealGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#2aa8ff"/><stop offset="0.5" stop-color="#7c5cff"/><stop offset="1" stop-color="#20e3c2"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="60" cy="60" r="56" fill="rgba(8,12,18,0.55)" stroke="url(#ppSealGrad)" stroke-width="2"/>
+                <circle cx="60" cy="60" r="33" fill="none" stroke="url(#ppSealGrad)" stroke-width="1.5" stroke-dasharray="3 4"/>
+                <g class="pp-seal-ring"><text font-size="9.5" font-weight="700" letter-spacing="2.2" fill="url(#ppSealGrad)"><textPath href="#ppSealPath">WARDENSMP · ПАСПОРТ ИГРОКА · WARDENSMP · ПАСПОРТ ИГРОКА ·</textPath></text></g>
+                <text x="60" y="71" text-anchor="middle" font-size="30" font-weight="900" fill="url(#ppSealGrad)">W</text>
+              </svg>
+            </div>
+
+            <div class="pp-fields">
+              <small class="pp-label">Ник</small>
+              <div class="pp-head">
+                <h2 id="pp-name"></h2>
+                <span class="pp-badge" id="pp-badge"></span>
+              </div>
+
+              <div class="pp-stats">
+                <div class="pp-stat">
+                  <span class="pp-stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <div><small>Наиграно</small><b id="pp-time">—</b></div>
+                </div>
+                <div class="pp-stat">
+                  <span class="pp-stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 9l3.5 7 3.5-7"/></svg></span>
+                  <div><small>Баланс</small><b id="pp-balance">—</b></div>
+                </div>
+              </div>
+
+              <div class="pp-uuid"><small class="pp-label">UUID</small><code id="pp-uuid">—</code></div>
+
+              <div class="pp-link">
+                <small class="pp-label">Ссылка на паспорт</small>
+                <div class="pp-link-row">
+                  <input id="pp-url" type="text" readonly aria-label="Ссылка на паспорт">
+                  <button class="btn" type="button" id="pp-copy">Копировать</button>
+                </div>
+              </div>
             </div>
           </div>
+
+          <pre class="pp-mrz" id="pp-mrz" aria-hidden="true"></pre>
         </div>
       </article>
 
