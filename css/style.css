@@ -865,3 +865,9 @@ body.leaving main, body.leaving .site-footer { opacity: 0; transition: opacity 0
 .pp-danger:hover { border-color: #ff6b6b; }
 @media (max-width: 800px) { .pp-card { grid-template-columns: 1fr; } .pp-skin { min-height: 300px; } .pp-skin img { max-height: 320px; } }
 @media (max-width: 480px) { .pp-stats { grid-template-columns: 1fr; } }
+
+/* Страница «Оплата не прошла» */
+.nf-fail .nf-code { color: #ff5a5a; font-size: clamp(4rem, 14vw, 7rem); text-shadow: 0 0 60px rgba(255, 90, 90, 0.35); }
+.nf-fail p { max-width: 34rem; }
+.nf-fail .nf-note { font-size: 0.92rem; }
+.nf-fail .nf-note a { color: var(--accent); }
