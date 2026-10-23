@@ -190,6 +190,7 @@
     <p class="cart-rub" id="cart-rub" hidden></p>
     <label class="terms"><input type="checkbox" id="f-terms"> <span>Принимаю условия <a href="${root}oferta.html" target="_blank" rel="noopener">оферты</a></span></label>
     <button class="btn btn-primary pay" id="cart-pay" type="button" disabled>Перейти к оплате ${ic('<path d="M5 12h14M13 6l6 6-6 6"/>')}</button>
+    <button class="btn btn-outline pay pay-alt" id="cart-pay-bot" type="button" disabled>Оплатить через бота поддержки</button>
     <p class="cart-hint" id="cart-hint" role="status"></p>
   </div>
 </aside>`;
@@ -205,7 +206,7 @@
   const cart = $("cart"), overlay = document.querySelector(".cart-overlay");
   const list = $("cart-items"), sub = $("cart-sub"), totalEl = $("cart-total");
   const nick = $("f-nick"), email = $("f-email"), friend = $("f-friend"), friendRow = $("f-friend-row");
-  const giftSw = $("f-gift"), terms = $("f-terms"), pay = $("cart-pay"), hint = $("cart-hint");
+  const giftSw = $("f-gift"), terms = $("f-terms"), pay = $("cart-pay"), payBot = $("cart-pay-bot"), hint = $("cart-hint");
   const BUYER_KEY = "wsmp-buyer";
 
   const money = (n) => WCUR.fmt(n);                          // для показа: в выбранной валюте
@@ -229,8 +230,11 @@
     else if (isGift() && !nickOk(friend.value)) msg = "Ник получателя: 3–16 символов, латиница, цифры и _.";
     else if (!mailOk(email.value)) msg = "Укажи корректный e-mail.";
     else if (!terms.checked) msg = "Прими условия оферты.";
-    pay.disabled = Boolean(msg) || getCart().length === 0;
-    hint.textContent = msg;
+    const busy = pay.dataset.busy === "1";
+    const blocked = Boolean(msg) || getCart().length === 0;
+    pay.disabled = blocked || busy;
+    payBot.disabled = blocked || busy;
+    if (!busy) hint.textContent = msg;
   }
 
   const cartItems = () => getCart().map(lineOf).filter(Boolean);
@@ -309,71 +313,69 @@
   terms.addEventListener("change", validate);
   document.addEventListener("currency:change", render);
 
-// Оплата через RollyPay
-pay.addEventListener("click", async () => {
-  if (pay.dataset.busy === "1") return;
+  // ---- Оплата через RollyPay ----
+  const PAY_API = "https://rollypay-api.wsmp.workers.dev/api/create-payment";
 
-  validate();
-  if (pay.disabled) return;
+  pay.addEventListener("click", async () => {
+    if (pay.dataset.busy === "1") return;
 
-  const playerName = nick.value.trim();
-  const buyerEmail = email.value.trim();
-  const gift = isGift();
-  const giftName = gift ? friend.value.trim() : "";
+    validate();
+    if (pay.disabled) return;
 
-  let items;
+    const playerName = nick.value.trim();
+    const buyerEmail = email.value.trim();
+    const gift = isGift();
+    const giftName = gift ? friend.value.trim() : "";
 
-  try {
-    items = getCart().map((entry) => {
-      if (!entry || typeof entry.id !== "string") {
-        throw new Error("Некорректный товар в корзине.");
+    let items;
+
+    try {
+      items = getCart().map((entry) => {
+        if (!entry || typeof entry.id !== "string") {
+          throw new Error("Некорректный товар в корзине.");
+        }
+
+        const item = { id: entry.id };
+
+        if (Number.isInteger(entry.term)) {
+          item.term = entry.term;
+        }
+
+        if (entry.id === "title") {
+          item.text = entry.text;
+          item.mode = entry.mode;
+          item.c1 = entry.c1;
+          item.c2 = entry.c2;
+        }
+
+        if (entry.id === "varda") {
+          item.rub = Number(entry.rub);
+        }
+
+        return item;
+      });
+
+      if (items.length === 0) {
+        hint.textContent = "Корзина пуста.";
+        return;
       }
-
-      const item = { id: entry.id };
-
-      if (Number.isInteger(entry.term)) {
-        item.term = entry.term;
-      }
-
-      if (entry.id === "title") {
-        item.text = entry.text;
-        item.mode = entry.mode;
-        item.c1 = entry.c1;
-        item.c2 = entry.c2;
-      }
-
-      if (entry.id === "varda") {
-        item.rub = Number(entry.rub);
-      }
-
-      return item;
-    });
-
-    if (items.length === 0) {
-      hint.textContent = "Корзина пуста.";
+    } catch (error) {
+      hint.textContent = error.message || "Не удалось прочитать корзину.";
       return;
     }
-  } catch (error) {
-    hint.textContent =
-      error.message || "Не удалось прочитать корзину.";
-    return;
-  }
 
-  const originalHtml = pay.innerHTML;
+    const originalHtml = pay.innerHTML;
 
-  pay.disabled = true;
-  pay.dataset.busy = "1";
-  pay.textContent = "Создаём платёж...";
-  hint.textContent = "Подключаемся к RollyPay...";
+    pay.dataset.busy = "1";
+    pay.disabled = true;
+    payBot.disabled = true;
+    pay.textContent = "Создаём платёж...";
+    hint.textContent = "Подключаемся к RollyPay...";
 
-  try {
-    const response = await fetch(
-      "https://rollypay-api.wsmp.workers.dev/api/create-payment",
-      {
+    try {
+      const response = await fetch(PAY_API, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           player_name: playerName,
           email: buyerEmail,
@@ -382,40 +384,51 @@ pay.addEventListener("click", async () => {
           accept_terms: terms.checked,
           items: items
         })
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.ok || !data.pay_url) {
+        throw new Error(data.error || `Не удалось создать платёж (${response.status}).`);
       }
-    );
 
-    const data = await response.json().catch(() => ({}));
+      const paymentUrl = new URL(data.pay_url);
 
-    if (!response.ok || !data.ok || !data.pay_url) {
-      throw new Error(
-        data.error || `Не удалось создать платёж (${response.status}).`
-      );
+      if (paymentUrl.protocol !== "https:" || paymentUrl.hostname !== "pay.rollypay.io") {
+        throw new Error("Получена некорректная ссылка на оплату.");
+      }
+
+      hint.textContent = "Перенаправляем на оплату...";
+      window.location.assign(paymentUrl.href);
+    } catch (error) {
+      const message = error.message || "Ошибка подключения к RollyPay.";
+
+      delete pay.dataset.busy;
+      pay.innerHTML = originalHtml;
+      validate();               // сначала пересчитываем кнопки,
+      hint.textContent = message; // потом показываем ошибку, чтобы validate её не затёр
     }
+  });
 
-    const paymentUrl = new URL(data.pay_url);
+  // Запасной вариант: заказ копируется и открывается чат с ботом поддержки.
+  const SUPPORT_BOT = "https://t.me/w_smp_bot";
+  payBot.addEventListener("click", () => {
+    if (payBot.disabled) return;
+    const items = cartItems();
+    const total = items.reduce((s, i) => s + i.price, 0);
+    const lines = ["Заказ WardenSMP", `Ник: ${nick.value.trim()}`, `E-mail: ${email.value.trim()}`];
+    if (isGift()) lines.push(`Подарок для: ${friend.value.trim()}`);
+    lines.push("Товары:");
+    items.forEach(({ p, label, price }) => lines.push(`• ${p.name} — ${label} — ${rub(price)}`));
+    lines.push(`Итого: ${rub(total)}`);
+    const text = lines.join("\n");
 
-    if (
-      paymentUrl.protocol !== "https:" ||
-      paymentUrl.hostname !== "pay.rollypay.io"
-    ) {
-      throw new Error("Получена некорректная ссылка на оплату.");
-    }
-
-    hint.textContent = "Перенаправляем на оплату...";
-    window.location.assign(paymentUrl.href);
-
-  } catch (error) {
-    hint.textContent =
-      error.message || "Ошибка подключения к RollyPay.";
-
-    pay.disabled = false;
-    delete pay.dataset.busy;
-    pay.innerHTML = originalHtml;
-
-    validate();
-  }
-});
+    const copied = navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject();
+    window.open(SUPPORT_BOT, "_blank", "noopener");
+    copied
+      .then(() => { hint.textContent = "Заказ скопирован. Вставь его в чат с ботом поддержки и отправь."; })
+      .catch(() => { hint.textContent = "Не удалось скопировать заказ. Отправь его боту вручную:\n" + text; });
+  });
 })();
 
 // Плашка «Паспорт»: если игрок уже входил, показываем его ник и ведём на его паспорт
