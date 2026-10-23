@@ -9,34 +9,78 @@
     { code: "EUR", sym: "€", name: "Евро", dec: 2 },
     { code: "UAH", sym: "₴", name: "Украинская гривна", dec: 0 },
   ];
-  // Запасные курсы (за 1 ₽) по данным ЦБ РФ на 08.10.2026, если свежие загрузить не удалось
-  const FALLBACK = { RUB: 1, KZT: 5.307, USD: 0.011699, EUR: 0.010381, UAH: 0.52482 };
-  const KEY = "wsmp-cur", RATES_KEY = "wsmp-rates-v1", TTL = 6 * 3600 * 1000;
+
+  // Запасные курсы за 1 ₽, если свежие загрузить не удалось
+  const FALLBACK = {
+    RUB: 1,
+    KZT: 5.307,
+    USD: 0.011699,
+    EUR: 0.010381,
+    UAH: 0.52482,
+  };
+
+  const KEY = "wsmp-cur";
+  const RATES_KEY = "wsmp-rates-v1";
+  const TTL = 6 * 3600 * 1000;
+
   const rates = Object.assign({}, FALLBACK);
   let code = "RUB";
-  try { const saved = localStorage.getItem(KEY); if (LIST.some((c) => c.code === saved)) code = saved; } catch (e) {}
+
+  try {
+    const saved = localStorage.getItem(KEY);
+    if (LIST.some((c) => c.code === saved)) code = saved;
+  } catch (e) {}
 
   const cur = () => LIST.find((c) => c.code === code);
   const others = LIST.filter((c) => c.code !== "RUB");
-  const valid = (r) => Boolean(r) && others.every((c) => Number.isFinite(r[c.code]) && r[c.code] > 0);
-  const pick = (r) => { const o = {}; others.forEach((c) => { o[c.code] = r[c.code]; }); return o; };
-  const apply = (r) => others.forEach((c) => { rates[c.code] = r[c.code]; });
-  const emit = () => document.dispatchEvent(new CustomEvent("currency:change"));
 
-  // Свежие курсы запрашиваем только если выбрана не рублёвая валюта, ответ хранится 6 часов
+  const valid = (r) =>
+    Boolean(r) &&
+    others.every((c) => Number.isFinite(r[c.code]) && r[c.code] > 0);
+
+  const pick = (r) => {
+    const o = {};
+    others.forEach((c) => {
+      o[c.code] = r[c.code];
+    });
+    return o;
+  };
+
+  const apply = (r) =>
+    others.forEach((c) => {
+      rates[c.code] = r[c.code];
+    });
+
+  const emit = () =>
+    document.dispatchEvent(new CustomEvent("currency:change"));
+
   function loadRates() {
     if (code === "RUB") return;
+
     try {
       const c = JSON.parse(localStorage.getItem(RATES_KEY));
-      if (c && Date.now() - c.t < TTL && valid(c.rates)) { apply(c.rates); return; }
+
+      if (c && Date.now() - c.t < TTL && valid(c.rates)) {
+        apply(c.rates);
+        return;
+      }
     } catch (e) {}
+
     fetch("https://open.er-api.com/v6/latest/RUB")
       .then((r) => r.json())
       .then((d) => {
         if (!d || d.result !== "success" || !valid(d.rates)) return;
+
         const r = pick(d.rates);
         apply(r);
-        try { localStorage.setItem(RATES_KEY, JSON.stringify({ t: Date.now(), rates: r })); } catch (e) {}
+
+        try {
+          localStorage.setItem(
+            RATES_KEY,
+            JSON.stringify({ t: Date.now(), rates: r })
+          );
+        } catch (e) {}
+
         emit();
       })
       .catch(() => {});
@@ -44,33 +88,78 @@
 
   function fmt(rub) {
     const c = cur();
-    return (rub * rates[c.code]).toLocaleString("ru-RU", { minimumFractionDigits: c.dec, maximumFractionDigits: c.dec }) + " " + c.sym;
+
+    return (
+      (rub * rates[c.code]).toLocaleString("ru-RU", {
+        minimumFractionDigits: c.dec,
+        maximumFractionDigits: c.dec,
+      }) +
+      " " +
+      c.sym
+    );
   }
+
   function set(next) {
     if (next === code || !LIST.some((c) => c.code === next)) return;
+
     code = next;
-    try { localStorage.setItem(KEY, code); } catch (e) {}
+
+    try {
+      localStorage.setItem(KEY, code);
+    } catch (e) {}
+
     loadRates();
     emit();
   }
 
   window.WCUR = { LIST, code: () => code, cur, fmt, set };
+
   loadRates();
 })();
-// На странице нужен <body data-root="" data-page="..."> (в папке privilege/: data-root="../").
+
+// На странице нужен <body data-root="" data-page="...">
+// В подпапке укажи data-root="../".
 (function () {
   const root = document.body.dataset.root || "";
   const page = document.body.dataset.page || "";
+
   const ic = (d) => `<svg class="ic" viewBox="0 0 24 24">${d}</svg>`;
 
   const links = [
-    ["akcii", "akcii.html", "Акции", ic('<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>')],
-    ["monitoring", "monitoring.html", "Мониторинг", ic('<path d="M3 12h4l3-8 4 16 3-8h4"/>')],
-    ["rules", "rules.html", "Правила", ic('<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>')],
-    ["media", "media.html", "Стать медиа", ic('<path d="M3 7h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H3z"/><path d="M17 11l4-2v6l-4-2"/>')],
+    [
+      "akcii",
+      "akcii.html",
+      "Акции",
+      ic('<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>'),
+    ],
+    [
+      "monitoring",
+      "monitoring.html",
+      "Мониторинг",
+      ic('<path d="M3 12h4l3-8 4 16 3-8h4"/>'),
+    ],
+    [
+      "rules",
+      "rules.html",
+      "Правила",
+      ic('<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>'),
+    ],
+    [
+      "media",
+      "media.html",
+      "Стать медиа",
+      ic('<path d="M3 7h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H3z"/><path d="M17 11l4-2v6l-4-2"/>'),
+    ],
   ];
-  const navHtml = links.map(([key, href, label, icon]) =>
-    `<a href="${root}${href}"${key === page ? ' aria-current="page"' : ""}><span class="ico">${icon}</span>${label}</a>`).join("");
+
+  const navHtml = links
+    .map(
+      ([key, href, label, icon]) =>
+        `<a href="${root}${href}"${
+          key === page ? ' aria-current="page"' : ""
+        }><span class="ico">${icon}</span>${label}</a>`
+    )
+    .join("");
 
   const curHtml = `
         <div class="cur" id="cur">
@@ -79,10 +168,14 @@
             <svg class="cur-chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
           </button>
           <div class="cur-menu" id="cur-menu" role="group" aria-label="Выбор валюты">
-            ${WCUR.LIST.map((c) => `<button class="cur-opt" type="button" data-cur="${c.code}" aria-pressed="${c.code === WCUR.code()}"><b>${c.sym}</b><span>${c.code} · ${c.name}</span></button>`).join("")}
+            ${WCUR.LIST.map(
+              (c) =>
+                `<button class="cur-opt" type="button" data-cur="${c.code}" aria-pressed="${c.code === WCUR.code()}"><b>${c.sym}</b><span>${c.code} · ${c.name}</span></button>`
+            ).join("")}
             <p class="cur-note">Оплата в рублях. Остальные валюты показаны по ориентировочному курсу.</p>
           </div>
         </div>`;
+
   const header = `
 <div class="island-wrap">
   <div class="wrap">
@@ -192,21 +285,45 @@
 
   const h = document.getElementById("site-header");
   const f = document.getElementById("site-footer");
+
   if (h) h.outerHTML = header;
   if (f) f.outerHTML = footer;
+
   document.body.insertAdjacentHTML("beforeend", cartHtml);
 
-  // ---- Корзина (товары и getCart/setCart/paintCart берутся из main.js) ----
+  // Корзина: товары и getCart/setCart/paintCart берутся из main.js
   const $ = (id) => document.getElementById(id);
-  const cart = $("cart"), overlay = document.querySelector(".cart-overlay");
-  const list = $("cart-items"), sub = $("cart-sub"), totalEl = $("cart-total");
-  const nick = $("f-nick"), email = $("f-email"), friend = $("f-friend"), friendRow = $("f-friend-row");
-  const giftSw = $("f-gift"), terms = $("f-terms"), pay = $("cart-pay"), hint = $("cart-hint");
+
+  const cart = $("cart");
+  const overlay = document.querySelector(".cart-overlay");
+  const list = $("cart-items");
+  const sub = $("cart-sub");
+  const totalEl = $("cart-total");
+
+  const nick = $("f-nick");
+  const email = $("f-email");
+  const friend = $("f-friend");
+  const friendRow = $("f-friend-row");
+
+  const giftSw = $("f-gift");
+  const terms = $("f-terms");
+  const pay = $("cart-pay");
+  const hint = $("cart-hint");
+
   const BUYER_KEY = "wsmp-buyer";
 
-  const money = (n) => WCUR.fmt(n);                          // для показа: в выбранной валюте
-  const rub = (n) => n.toLocaleString("ru-RU") + " ₽";        // для оплаты и заказа: всегда в рублях
-  const plural = (n) => (n % 10 === 1 && n % 100 !== 11) ? "товар" : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? "товара" : "товаров";
+  const money = (n) => WCUR.fmt(n);
+  const rub = (n) => n.toLocaleString("ru-RU") + " ₽";
+
+  const plural = (n) =>
+    n % 10 === 1 && n % 100 !== 11
+      ? "товар"
+      : n % 10 >= 2 &&
+          n % 10 <= 4 &&
+          (n % 100 < 12 || n % 100 > 14)
+        ? "товара"
+        : "товаров";
+
   const nickOk = (v) => /^[A-Za-z0-9_]{3,16}$/.test(v.trim());
   const mailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
   const isGift = () => giftSw.getAttribute("aria-checked") === "true";
@@ -217,16 +334,28 @@
     email.value = saved.email || "";
   } catch (e) {}
 
-  const trash = ic('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>');
+  const trash = ic(
+    '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>'
+  );
 
   function validate() {
     let msg = "";
-    if (!nickOk(nick.value)) msg = "Ник: 3–16 символов, латиница, цифры и _.";
-    else if (isGift() && !nickOk(friend.value)) msg = "Ник получателя: 3–16 символов, латиница, цифры и _.";
-    else if (!mailOk(email.value)) msg = "Укажи корректный e-mail.";
-    else if (!terms.checked) msg = "Прими условия оферты.";
+
+    if (!nickOk(nick.value)) {
+      msg = "Ник: 3–16 символов, латиница, цифры и _.";
+    } else if (isGift() && !nickOk(friend.value)) {
+      msg = "Ник получателя: 3–16 символов, латиница, цифры и _.";
+    } else if (!mailOk(email.value)) {
+      msg = "Укажи корректный e-mail.";
+    } else if (!terms.checked) {
+      msg = "Прими условия оферты.";
+    }
+
     pay.disabled = Boolean(msg) || getCart().length === 0;
-    hint.textContent = msg;
+
+    if (msg && pay.dataset.busy !== "1") {
+      hint.textContent = msg;
+    }
   }
 
   const cartItems = () => getCart().map(lineOf).filter(Boolean);
@@ -234,212 +363,360 @@
   function render() {
     const items = cartItems();
     const total = items.reduce((s, i) => s + i.price, 0);
+
     cart.classList.toggle("is-empty", items.length === 0);
-    sub.textContent = items.length ? `${items.length} ${plural(items.length)} на ${money(total)}` : "Пока пусто";
+
+    sub.textContent = items.length
+      ? `${items.length} ${plural(items.length)} на ${money(total)}`
+      : "Пока пусто";
+
     totalEl.textContent = items.length ? money(total) : "—";
+
     const rubEl = $("cart-rub");
     const foreign = items.length > 0 && WCUR.code() !== "RUB";
+
     rubEl.hidden = !foreign;
-    if (foreign) rubEl.textContent = `Оплата в рублях: ${rub(total)}. Другие валюты показаны по ориентировочному курсу.`;
-    list.innerHTML = items.map(({ p, label, price }) => `
+
+    if (foreign) {
+      rubEl.textContent =
+        `Оплата в рублях: ${rub(total)}. ` +
+        "Другие валюты показаны по ориентировочному курсу.";
+    }
+
+    list.innerHTML = items
+      .map(
+        ({ p, label, price }) => `
       <li class="cart-item">
         <span class="cart-thumb">${ICONS[p.icon || "box"]}</span>
         <span class="cart-info"><b>${p.name}</b><small>${label}</small></span>
         <span class="cart-price">${money(price)}</span>
         <button class="icon-btn small" type="button" data-remove="${p.id}" aria-label="Убрать ${p.name}">${trash}</button>
-      </li>`).join("");
+      </li>`
+      )
+      .join("");
+
     validate();
   }
 
   let lastFocus = null;
+
   function openCart() {
     lastFocus = document.activeElement;
+
     render();
+
     overlay.classList.add("open");
     cart.classList.add("open");
     document.body.classList.add("lock");
+
     cart.focus();
   }
+
   function closeCart() {
     overlay.classList.remove("open");
     cart.classList.remove("open");
     document.body.classList.remove("lock");
-    if (lastFocus && lastFocus.focus) lastFocus.focus();
+
+    if (lastFocus && lastFocus.focus) {
+      lastFocus.focus();
+    }
   }
 
   document.addEventListener("click", (e) => {
-    if (e.target.closest("[data-cart-open]")) return openCart();
-    if (e.target.closest("[data-cart-close]")) return closeCart();
+    if (e.target.closest("[data-cart-open]")) {
+      return openCart();
+    }
+
+    if (e.target.closest("[data-cart-close]")) {
+      return closeCart();
+    }
+
     const rm = e.target.closest("[data-remove]");
+
     if (rm) {
       setCart(getCart().filter((x) => x.id !== rm.dataset.remove));
       paintCart();
       return render();
     }
-    if (e.target.closest(".add") && cart.classList.contains("open")) render();
+
+    if (e.target.closest(".add") && cart.classList.contains("open")) {
+      render();
+    }
   });
 
   document.addEventListener("cart:open", openCart);
 
   document.addEventListener("keydown", (e) => {
     if (!cart.classList.contains("open")) return;
+
     if (e.key === "Escape") return closeCart();
     if (e.key !== "Tab") return;
-    const f = [...cart.querySelectorAll("button:not(:disabled), a[href], input")].filter((el) => el.offsetParent !== null);
+
+    const f = [
+      ...cart.querySelectorAll(
+        "button:not(:disabled), a[href], input"
+      ),
+    ].filter((el) => el.offsetParent !== null);
+
     if (!f.length) return;
-    const first = f[0], last = f[f.length - 1];
-    if (e.shiftKey && (document.activeElement === first || document.activeElement === cart)) { e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+
+    const first = f[0];
+    const last = f[f.length - 1];
+
+    if (
+      e.shiftKey &&
+      (document.activeElement === first ||
+        document.activeElement === cart)
+    ) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   });
 
   giftSw.addEventListener("click", () => {
     const on = !isGift();
+
     giftSw.setAttribute("aria-checked", String(on));
     friendRow.hidden = !on;
+
     validate();
   });
-  [nick, email, friend].forEach((el) => el.addEventListener("input", () => {
-    try { localStorage.setItem(BUYER_KEY, JSON.stringify({ nick: nick.value.trim(), email: email.value.trim() })); } catch (e) {}
-    validate();
-  }));
+
+  [nick, email, friend].forEach((el) =>
+    el.addEventListener("input", () => {
+      try {
+        localStorage.setItem(
+          BUYER_KEY,
+          JSON.stringify({
+            nick: nick.value.trim(),
+            email: email.value.trim(),
+          })
+        );
+      } catch (e) {}
+
+      validate();
+    })
+  );
+
   terms.addEventListener("change", validate);
   document.addEventListener("currency:change", render);
 
-  // Пока оплата идёт через бота поддержки: заказ копируется и открывается чат с ботом.
-  // Когда подключишь платёжную систему, замени содержимое этого обработчика на переход к оплате.
-pay.addEventListener("click", async () => {
-  if (pay.dataset.busy === "1") return;
+  // Оплата через RollyPay: сервер сам проверяет цены всех товаров.
+  pay.addEventListener("click", async () => {
+    if (pay.dataset.busy === "1") return;
 
-  validate();
-  if (pay.disabled) return;
+    validate();
 
-  const playerName = nick.value.trim();
-  const buyerEmail = email.value.trim();
-  const gift = isGift();
-  const giftName = gift ? friend.value.trim() : "";
+    if (pay.disabled) return;
 
-  let items;
+    const playerName = nick.value.trim();
+    const buyerEmail = email.value.trim();
+    const gift = isGift();
+    const giftName = gift ? friend.value.trim() : "";
 
-  try {
-    items = getCart().map((entry) => {
-      const item = { id: entry.id };
+    let items;
 
-      if (Number.isInteger(entry.term)) {
-        item.term = entry.term;
+    try {
+      items = getCart().map((entry) => {
+        if (!entry || typeof entry.id !== "string") {
+          throw new Error("Некорректный товар в корзине.");
+        }
+
+        const item = { id: entry.id };
+
+        if (Number.isInteger(entry.term)) {
+          item.term = entry.term;
+        }
+
+        if (entry.id === "title") {
+          item.text = entry.text;
+          item.mode = entry.mode;
+          item.c1 = entry.c1;
+          item.c2 = entry.c2;
+        }
+
+        if (entry.id === "varda") {
+          item.rub = Number(entry.rub);
+        }
+
+        return item;
+      });
+
+      if (!items.length) {
+        hint.textContent = "Корзина пуста.";
+        return;
       }
-
-      if (entry.id === "title") {
-        item.text = entry.text;
-        item.mode = entry.mode;
-        item.c1 = entry.c1;
-        item.c2 = entry.c2;
-      }
-
-      if (entry.id === "varda") {
-        item.rub = Number(entry.rub);
-      }
-
-      return item;
-    });
-
-    if (!items.length) {
-      hint.textContent = "Корзина пуста.";
+    } catch (error) {
+      hint.textContent =
+        error.message || "Не удалось прочитать корзину.";
       return;
     }
-  } catch {
-    hint.textContent = "Не удалось прочитать корзину.";
-    return;
-  }
 
-  const originalText = pay.textContent;
+    const originalHtml = pay.innerHTML;
 
-  pay.disabled = true;
-  pay.dataset.busy = "1";
-  pay.textContent = "Создаём платёж...";
-  hint.textContent = "Подключаемся к RollyPay...";
+    pay.disabled = true;
+    pay.dataset.busy = "1";
+    pay.textContent = "Создаём платёж...";
+    hint.textContent = "Подключаемся к RollyPay...";
 
-  try {
-    const response = await fetch(
-      "https://rollypay-api.wsmp.workers.dev/api/create-payment",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          player_name: playerName,
-          email: buyerEmail,
-          is_gift: gift,
-          gift_name: giftName,
-          accept_terms: terms.checked,
-          items
-        })
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok || !data.ok || !data.pay_url) {
-      throw new Error(
-        data.error || "Не удалось создать платёж."
+    try {
+      const response = await fetch(
+        "https://rollypay-api.wsmp.workers.dev/api/create-payment",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            player_name: playerName,
+            email: buyerEmail,
+            is_gift: gift,
+            gift_name: giftName,
+            accept_terms: terms.checked,
+            items,
+          }),
+        }
       );
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.ok || !data.pay_url) {
+        throw new Error(
+          data.error ||
+            `Ошибка создания платежа (${response.status}).`
+        );
+      }
+
+      const paymentUrl = new URL(data.pay_url);
+
+      if (
+        paymentUrl.protocol !== "https:" ||
+        paymentUrl.hostname !== "pay.rollypay.io"
+      ) {
+        throw new Error("Получена некорректная ссылка на оплату.");
+      }
+
+      hint.textContent = "Перенаправляем на оплату...";
+      window.location.assign(paymentUrl.href);
+    } catch (error) {
+      hint.textContent =
+        error.message || "Ошибка подключения к RollyPay.";
+
+      pay.disabled = false;
+      delete pay.dataset.busy;
+      pay.innerHTML = originalHtml;
+
+      validate();
     }
-
-    const paymentUrl = new URL(data.pay_url);
-
-    if (
-      paymentUrl.protocol !== "https:" ||
-      paymentUrl.hostname !== "pay.rollypay.io"
-    ) {
-      throw new Error("Некорректная ссылка на оплату.");
-    }
-
-    hint.textContent = "Перенаправляем на оплату...";
-    window.location.assign(paymentUrl.href);
-  } catch (error) {
-    hint.textContent =
-      error.message || "Ошибка подключения к RollyPay.";
-
-    pay.disabled = false;
-    delete pay.dataset.busy;
-    pay.textContent = originalText;
-    validate();
-  }
-});
+  });
 })();
 
 // Выбор валюты в шапке
 (function () {
   const box = document.getElementById("cur");
   if (!box) return;
-  const btn = box.querySelector(".cur-btn"), sym = document.getElementById("cur-sym");
-  const setOpen = (on) => { box.classList.toggle("open", on); btn.setAttribute("aria-expanded", String(on)); };
+
+  const btn = box.querySelector(".cur-btn");
+  const sym = document.getElementById("cur-sym");
+
+  const setOpen = (on) => {
+    box.classList.toggle("open", on);
+    btn.setAttribute("aria-expanded", String(on));
+  };
+
   const paint = () => {
     sym.textContent = WCUR.cur().sym;
-    box.querySelectorAll(".cur-opt").forEach((o) => o.setAttribute("aria-pressed", String(o.dataset.cur === WCUR.code())));
+
+    box.querySelectorAll(".cur-opt").forEach((o) =>
+      o.setAttribute(
+        "aria-pressed",
+        String(o.dataset.cur === WCUR.code())
+      )
+    );
   };
-  btn.addEventListener("click", () => setOpen(!box.classList.contains("open")));
-  box.querySelectorAll(".cur-opt").forEach((o) => o.addEventListener("click", () => { WCUR.set(o.dataset.cur); paint(); setOpen(false); }));
-  document.addEventListener("click", (e) => { if (!box.contains(e.target)) setOpen(false); });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && box.classList.contains("open")) { setOpen(false); btn.focus(); } });
+
+  btn.addEventListener("click", () =>
+    setOpen(!box.classList.contains("open"))
+  );
+
+  box.querySelectorAll(".cur-opt").forEach((o) =>
+    o.addEventListener("click", () => {
+      WCUR.set(o.dataset.cur);
+      paint();
+      setOpen(false);
+    })
+  );
+
+  document.addEventListener("click", (e) => {
+    if (!box.contains(e.target)) {
+      setOpen(false);
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && box.classList.contains("open")) {
+      setOpen(false);
+      btn.focus();
+    }
+  });
+
   document.addEventListener("currency:change", paint);
 })();
 
-// Плавный уход со страницы: контент гаснет, потом открывается следующая страница (она сама плавно появляется)
+// Плавный уход со страницы: контент гаснет, затем открывается следующая страница
 (function () {
-  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  // при возврате кнопкой «Назад» страница может прийти из кеша уже «погасшей»
-  window.addEventListener("pageshow", () => document.body.classList.remove("leaving"));
+  const reduce =
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // При возврате кнопкой «Назад» страница может прийти из кеша уже «погасшей»
+  window.addEventListener("pageshow", () =>
+    document.body.classList.remove("leaving")
+  );
+
   if (reduce) return;
+
   document.addEventListener("click", (e) => {
-    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (
+      e.button !== 0 ||
+      e.metaKey ||
+      e.ctrlKey ||
+      e.shiftKey ||
+      e.altKey
+    ) {
+      return;
+    }
+
     const a = e.target.closest("a[href]");
-    if (!a || a.target === "_blank" || a.hasAttribute("download") || a.closest("[data-open]")) return;
+
+    if (
+      !a ||
+      a.target === "_blank" ||
+      a.hasAttribute("download") ||
+      a.closest("[data-open]")
+    ) {
+      return;
+    }
+
     const url = new URL(a.href, location.href);
-    if (url.origin !== location.origin) return;                                   // внешние ссылки и mailto
-    if (url.pathname === location.pathname && url.search === location.search) return; // якорь на этой же странице
+
+    if (url.origin !== location.origin) return;
+    if (
+      url.pathname === location.pathname &&
+      url.search === location.search
+    ) {
+      return;
+    }
+
     e.preventDefault();
+
     document.body.classList.add("leaving");
-    setTimeout(() => { location.href = a.href; }, 220);
+
+    setTimeout(() => {
+      location.href = a.href;
+    }, 220);
   });
 })();
