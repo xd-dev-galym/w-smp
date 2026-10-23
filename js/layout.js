@@ -309,25 +309,113 @@
   terms.addEventListener("change", validate);
   document.addEventListener("currency:change", render);
 
-  // Пока оплата идёт через бота поддержки: заказ копируется и открывается чат с ботом.
-  // Когда подключишь платёжную систему, замени содержимое этого обработчика на переход к оплате.
-  const SUPPORT_BOT = "https://t.me/w_smp_bot";
-  pay.addEventListener("click", () => {
-    const items = cartItems();
-    const total = items.reduce((s, i) => s + i.price, 0);
-    const lines = ["Заказ WardenSMP", `Ник: ${nick.value.trim()}`, `E-mail: ${email.value.trim()}`];
-    if (isGift()) lines.push(`Подарок для: ${friend.value.trim()}`);
-    lines.push("Товары:");
-    items.forEach(({ p, label, price }) => lines.push(`• ${p.name} — ${label} — ${rub(price)}`));
-    lines.push(`Итого: ${rub(total)}`);
-    const text = lines.join("\n");
+// Оплата через RollyPay
+pay.addEventListener("click", async () => {
+  if (pay.dataset.busy === "1") return;
 
-    const copied = navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject();
-    window.open(SUPPORT_BOT, "_blank", "noopener");
-    copied
-      .then(() => { hint.textContent = "Заказ скопирован. Вставь его в чат с ботом поддержки и отправь."; })
-      .catch(() => { hint.textContent = "Не удалось скопировать заказ. Отправь его боту вручную:\n" + text; });
-  });
+  validate();
+  if (pay.disabled) return;
+
+  const playerName = nick.value.trim();
+  const buyerEmail = email.value.trim();
+  const gift = isGift();
+  const giftName = gift ? friend.value.trim() : "";
+
+  let items;
+
+  try {
+    items = getCart().map((entry) => {
+      if (!entry || typeof entry.id !== "string") {
+        throw new Error("Некорректный товар в корзине.");
+      }
+
+      const item = { id: entry.id };
+
+      if (Number.isInteger(entry.term)) {
+        item.term = entry.term;
+      }
+
+      if (entry.id === "title") {
+        item.text = entry.text;
+        item.mode = entry.mode;
+        item.c1 = entry.c1;
+        item.c2 = entry.c2;
+      }
+
+      if (entry.id === "varda") {
+        item.rub = Number(entry.rub);
+      }
+
+      return item;
+    });
+
+    if (items.length === 0) {
+      hint.textContent = "Корзина пуста.";
+      return;
+    }
+  } catch (error) {
+    hint.textContent =
+      error.message || "Не удалось прочитать корзину.";
+    return;
+  }
+
+  const originalHtml = pay.innerHTML;
+
+  pay.disabled = true;
+  pay.dataset.busy = "1";
+  pay.textContent = "Создаём платёж...";
+  hint.textContent = "Подключаемся к RollyPay...";
+
+  try {
+    const response = await fetch(
+      "https://rollypay-api.wsmp.workers.dev/api/create-payment",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          player_name: playerName,
+          email: buyerEmail,
+          is_gift: gift,
+          gift_name: giftName,
+          accept_terms: terms.checked,
+          items: items
+        })
+      }
+    );
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || !data.ok || !data.pay_url) {
+      throw new Error(
+        data.error || `Не удалось создать платёж (${response.status}).`
+      );
+    }
+
+    const paymentUrl = new URL(data.pay_url);
+
+    if (
+      paymentUrl.protocol !== "https:" ||
+      paymentUrl.hostname !== "pay.rollypay.io"
+    ) {
+      throw new Error("Получена некорректная ссылка на оплату.");
+    }
+
+    hint.textContent = "Перенаправляем на оплату...";
+    window.location.assign(paymentUrl.href);
+
+  } catch (error) {
+    hint.textContent =
+      error.message || "Ошибка подключения к RollyPay.";
+
+    pay.disabled = false;
+    delete pay.dataset.busy;
+    pay.innerHTML = originalHtml;
+
+    validate();
+  }
+});
 })();
 
 // Плашка «Паспорт»: если игрок уже входил, показываем его ник и ведём на его паспорт
