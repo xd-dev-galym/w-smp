@@ -271,6 +271,7 @@ button { font-family: inherit; }
 .terms { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; color: var(--muted); font-size: 0.9rem; cursor: pointer; }
 .terms input { width: 18px; height: 18px; accent-color: var(--accent); }
 .pay { width: 100%; padding: 1rem; }
+.pay-alt { margin-top: 0.6rem; padding: 0.8rem; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn-primary:disabled:hover { background: var(--accent); box-shadow: none; }
 .cart-hint { min-height: 1.3rem; margin: 0.7rem 0 0; color: var(--muted); font-size: 0.85rem; }
